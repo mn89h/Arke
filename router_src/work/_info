@@ -1,0 +1,152 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 d/home/malte/Arke-Legacy/router_src
+Parke_pkg
+Z1 DPx4 ieee 11 numeric_std 0 22 :ASDNFgHXf_ih3J@9F3Ze1
+Z2 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
+Z3 DPx4 ieee 14 std_logic_1164 0 22 eNV`TJ_GofJTzYa?f<@Oe1
+Z4 w1571671180
+R0
+Z5 8Arke_pkg.vhd
+Z6 FArke_pkg.vhd
+l0
+L15
+V4O[h4079Az^>=Ro]WhWR^1
+!s100 =zQP6ZAB7_E<Z7ZTAFlAV2
+Z7 OV;C;10.5b;63
+32
+b1
+Z8 !s110 1571845291
+!i10b 1
+Z9 !s108 1571845291.000000
+Z10 !s90 Arke_pkg.vhd|
+Z11 !s107 Arke_pkg.vhd|
+!i113 1
+Z12 tExplicit 1 CvgOpt 0
+Bbody
+Z13 DPx4 work 8 arke_pkg 0 22 4O[h4079Az^>=Ro]WhWR^1
+R1
+R2
+R3
+l0
+L194
+VU?3lzfhNR^]mUNa?T`lIQ0
+!s100 =X`>ZdQ8D2FJBoHk7EW:31
+R7
+32
+R8
+!i10b 1
+R9
+R10
+R11
+!i113 1
+R12
+Einputbuffer
+R4
+R13
+R1
+R2
+R3
+R0
+Z14 8InputBuffer.vhd
+Z15 FInputBuffer.vhd
+l0
+L16
+VTZ]>K]YB7M0?eR@9<M9730
+!s100 4NbQ9ia`4_5RATo_7CnQe0
+R7
+32
+Z16 !s110 1571846194
+!i10b 1
+Z17 !s108 1571846194.000000
+Z18 !s90 InputBuffer.vhd|
+Z19 !s107 InputBuffer.vhd|
+!i113 1
+R12
+Apipeline_3_cycles
+R13
+R1
+R2
+R3
+Z20 DEx4 work 11 inputbuffer 0 22 TZ]>K]YB7M0?eR@9<M9730
+l164
+L149
+Vc=nLz4:HNRLmgL@fW@<3a3
+!s100 _R7KeSzVVhF@<]OZ0FzPE0
+R7
+32
+R16
+!i10b 1
+R17
+R18
+R19
+!i113 1
+R12
+Apipeline_4_cycles
+R13
+R1
+R2
+R3
+R20
+l50
+L35
+Vi?:n3FaD41Bz@7W?5ma]V1
+!s100 APPc]G`n;E2@@E=Og]:3i2
+R7
+32
+R16
+!i10b 1
+R17
+R18
+R19
+!i113 1
+R12
+Erouter
+Z21 w1571846169
+R1
+R13
+R2
+R3
+R0
+Z22 8Router.vhd
+Z23 FRouter.vhd
+l0
+L16
+V0bRDM]5BdSO7g3zzLY60P1
+!s100 QM4?nl0^bHGNdBJH2hol91
+R7
+32
+Z24 !s110 1571846196
+!i10b 1
+Z25 !s108 1571846196.000000
+Z26 !s90 Router.vhd|
+Z27 !s107 Router.vhd|
+!i113 1
+R12
+Arouter
+R20
+R1
+R13
+R2
+R3
+DEx4 work 6 router 0 22 0bRDM]5BdSO7g3zzLY60P1
+l71
+L56
+VO4if4MMPIkVSnaCTM:^TW0
+!s100 6Em@T5EnJn>OYV6A;VG9Z0
+R7
+32
+R24
+!i10b 1
+R25
+R26
+R27
+!i113 1
+R12
