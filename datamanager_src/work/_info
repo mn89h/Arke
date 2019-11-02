@@ -1,0 +1,133 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 d/home/malte/Arke-Legacy/datamanager_src
+Parke_pkg
+Z1 DPx4 ieee 11 numeric_std 0 22 :ASDNFgHXf_ih3J@9F3Ze1
+Z2 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
+Z3 DPx4 ieee 14 std_logic_1164 0 22 eNV`TJ_GofJTzYa?f<@Oe1
+Z4 w1571671180
+R0
+Z5 8../router_src/Arke_pkg.vhd
+Z6 F../router_src/Arke_pkg.vhd
+l0
+L15
+V4O[h4079Az^>=Ro]WhWR^1
+!s100 =zQP6ZAB7_E<Z7ZTAFlAV2
+Z7 OV;C;10.5b;63
+32
+b1
+Z8 !s110 1572662109
+!i10b 1
+Z9 !s108 1572662109.000000
+Z10 !s90 ../router_src/Arke_pkg.vhd|
+Z11 !s107 ../router_src/Arke_pkg.vhd|
+!i113 1
+Z12 tExplicit 1 CvgOpt 0
+Bbody
+Z13 DPx4 work 8 arke_pkg 0 22 4O[h4079Az^>=Ro]WhWR^1
+R1
+R2
+R3
+l0
+L194
+VU?3lzfhNR^]mUNa?T`lIQ0
+!s100 =X`>ZdQ8D2FJBoHk7EW:31
+R7
+32
+R8
+!i10b 1
+R9
+R10
+R11
+!i113 1
+R12
+Edatamanager
+R4
+R13
+R1
+Z14 DPx4 work 12 text_package 0 22 mci>o]AFhZzo1Al<zV<4o1
+R2
+R3
+R0
+Z15 8DataManager.vhd
+Z16 FDataManager.vhd
+l0
+L18
+V_7SX`JQ2JT=`@=ZH14JF60
+!s100 HM87f8lgl>[[mNWYJJJ7D3
+R7
+32
+Z17 !s110 1572662114
+!i10b 1
+Z18 !s108 1572662114.000000
+Z19 !s90 DataManager.vhd|
+Z20 !s107 DataManager.vhd|
+!i113 1
+R12
+Abehavioral
+R13
+R1
+R14
+R2
+R3
+DEx4 work 11 datamanager 0 22 _7SX`JQ2JT=`@=ZH14JF60
+l36
+L35
+VjeiPS?;ha5=RY>H;E`W`a2
+!s100 d1IakFcLGg]5A>zSMERo<2
+R7
+32
+R17
+!i10b 1
+R18
+R19
+R20
+!i113 1
+R12
+Ptext_package
+R1
+R2
+R3
+R4
+R0
+Z21 8Text_Package.vhd
+Z22 FText_Package.vhd
+l0
+L14
+Vmci>o]AFhZzo1Al<zV<4o1
+!s100 ;00[6GI[z>nm8_h]Dk2;b3
+R7
+32
+b1
+Z23 !s110 1572662072
+!i10b 1
+Z24 !s108 1572662072.000000
+Z25 !s90 Text_Package.vhd|
+Z26 !s107 Text_Package.vhd|
+!i113 1
+R12
+Bbody
+R14
+R1
+R2
+R3
+l0
+L24
+V39AHlNl7^lF>mj]]38J;M0
+!s100 bQI:gn<X?K?JbZ0OGeWQE3
+R7
+32
+R23
+!i10b 1
+R24
+R25
+R26
+!i113 1
+R12
