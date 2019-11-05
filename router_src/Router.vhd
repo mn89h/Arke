@@ -14,7 +14,36 @@ use work.Arke_pkg.all;
 
 entity Router is
     generic(
-        address: std_logic_vector(DATA_WIDTH-1 downto 0) := (others=>'0')
+        --fix 15 to DATA_WIDTH-1
+        address                 : std_logic_vector(15 downto 0) := (others=>'0');
+        use_data_in_local       : boolean := true;
+        use_data_in_east        : boolean := true;
+        use_data_in_south       : boolean := true;
+        use_data_in_west        : boolean := true;
+        use_data_in_north       : boolean := true;
+        use_data_in_up          : boolean := true;
+        use_data_in_down        : boolean := true;
+        use_control_in_local    : boolean := true;
+        use_control_in_east     : boolean := true;
+        use_control_in_south    : boolean := true;
+        use_control_in_west     : boolean := true;
+        use_control_in_north    : boolean := true;
+        use_control_in_up       : boolean := true;
+        use_control_in_down     : boolean := true;
+        use_data_out_local      : boolean := true;
+        use_data_out_east       : boolean := true;
+        use_data_out_south      : boolean := true;
+        use_data_out_west       : boolean := true;
+        use_data_out_north      : boolean := true;
+        use_data_out_up         : boolean := true;
+        use_data_out_down       : boolean := true;
+        use_control_out_local   : boolean := true;
+        use_control_out_east    : boolean := true;
+        use_control_out_south   : boolean := true;
+        use_control_out_west    : boolean := true;
+        use_control_out_north   : boolean := true;
+        use_control_out_up      : boolean := true;
+        use_control_out_down    : boolean := true
     );
     port(
         clk         : in std_logic;

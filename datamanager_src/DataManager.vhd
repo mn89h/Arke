@@ -10,10 +10,10 @@
 
 library ieee;
 use ieee.std_logic_1164.all;
-use std.textio.all;
+use ieee.std_logic_textio.all;
 use work.Text_Package.all;
+use std.textio.all;
 use work.Arke_pkg.all;
-
 
 entity DataManager is 
     generic(
@@ -24,44 +24,57 @@ entity DataManager is
         clk : in std_logic;
         rst : in std_logic;
         
-        data_in : in std_logic_vector(DATA_WIDTH-1 downto 0);
-        control_in : in std_logic_vector(CONTROL_WIDTH-1 downto 0);
+        data_in     : in std_logic_vector(DATA_WIDTH-1 downto 0);
+        control_in  : in std_logic_vector(CONTROL_WIDTH-1 downto 0);
         
-        data_out : out std_logic_vector(DATA_WIDTH-1 downto 0);
+        data_out    : out std_logic_vector(DATA_WIDTH-1 downto 0);
         control_out : out std_logic_vector(CONTROL_WIDTH-1 downto 0)
     );
 end DataManager;
 
+
 architecture behavioral of DataManager is
 begin
     SEND: block
-        type state is (S0, S1);
+        
+    constant RAM_SZ : integer := 39;
+    type Mem_Type is array(0 to RAM_SZ-1) of std_logic_vector((DATA_WIDTH+3) downto 0);
+    type state is (S0, S1);
+
+        impure function init_mem(fileNameIn_v : in string) return Mem_Type is
+            file flitFile : text open read_mode is fileNameIn_v;
+            variable flitLine : line;
+            variable temp_bv  : string(1 to 5);
+            variable temp_mem : Mem_Type;
+        begin
+            for i in Mem_Type'range loop
+                readline(flitFile, flitLine);
+                read(flitLine, temp_bv);
+                temp_mem(i) := StringToStdLogicVector(temp_bv);
+            end loop;
+            return temp_mem;
+        end function;
+
+        
+        signal ram_send     : Mem_Type := init_mem(fileNameIn);
         signal currentState : state;
-        signal words : std_logic_vector(DATA_WIDTH+3 downto 0); --  eop + word 
-        file flitFile : text open read_mode is fileNameIn;
+        signal words        : std_logic_vector(DATA_WIDTH+3 downto 0); --  eop + word 
+        signal counter      : integer range 0 to RAM_SZ;
+
     begin
         process(clk, rst)
-            variable flitLine   : line;
-            variable str        : string(1 to 5);
         begin 
             if rst = '1' then
                 currentState <= S1;
-                if not(endfile(flitFile)) then
-                    readline(flitFile, flitLine);
-                    read(flitLine, str);
-                    words <= StringToStdLogicVector(str);
-                else
-                    words <= (OTHERS=>'0');
-                end if;
+                counter <= 0;
             elsif rising_edge(clk) then
                 case currentState is
                     when S0 =>
-                        if not(endfile(flitFile)) or (control_in(STALL_GO)='0') then
+                        if (counter < RAM_SZ) or (control_in(STALL_GO)='0') then
                             if(control_in(STALL_GO)='1') then
-                                readline(flitFile, flitLine);
-                                read(flitLine, str);
-                                words <= StringToStdLogicVector(str);
+                                words <= ram_send(counter);
                                 currentState <= S0;
+                                counter <= counter + 1;
                             else -- Local port haven't space on buffer
                                 currentState <= S0;
                             end if;
@@ -70,7 +83,7 @@ begin
                         end if;
 
                     when S1 =>
-                        if not(endfile(flitFile)) then
+                        if (counter < RAM_SZ) then
                             currentState <= S0;
                         else
                             currentState <= S1;
@@ -84,25 +97,28 @@ begin
     end block SEND;
     
     RECIEVE: block
-        type state is (S0);
+        type state is (S0);    
+        constant RAM_SZ : integer := 39;
+        type Mem_Type is array(0 to RAM_SZ-1) of std_logic_vector((DATA_WIDTH+3) downto 0);
+
         signal currentState : state;
+        signal ram_recv     : Mem_Type;
+        signal counter      : integer range 0 to RAM_SZ;
         signal completeLine : std_logic_vector(DATA_WIDTH+3 downto 0);
-        file flitFile : text open write_mode is fileNameOut;
     begin
         completeLine <= b"000" & control_in(EOP) & data_in;
         process(clk, rst)
-            variable flitLine   : line;
-            variable str        : string (1 to 9);
         begin
             if rst = '1' then
                 currentState <= S0;
                 control_out(STALL_GO) <= '0';
+                counter <= 0;
             elsif rising_edge(clk) then
                 case currentState is
                     when S0 =>
                         if control_in(RX) = '1' then
-                            write(flitLine, StdLogicVectorToString(completeLine));
-                            writeline(flitFile, flitLine);
+                            ram_recv(counter) <= completeLine;
+                            counter <= counter + 1;
                         end if;
                         currentState <= S0;
                 end case;
