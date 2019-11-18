@@ -30,6 +30,7 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use work.NIC_pkg.all;
+use work.FIFO_pkg.all;
 
 entity AXI4_Full_Slave is
   port (
@@ -151,7 +152,7 @@ end AXI4_Full_Slave;
 
 architecture Behavioral of AXI4_Full_Slave is
 begin
-    
+
     FIFO_WRRQA: STD_FIFO
     generic map(
         data_type       => AXI4_Full_Wr_RqA;

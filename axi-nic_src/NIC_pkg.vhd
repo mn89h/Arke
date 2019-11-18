@@ -11,7 +11,7 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
-use work.SERIALIZE_PKG.all;
+use work.SERIALIZE_pkg.all;
 
 package NIC_pkg is
     
@@ -21,54 +21,58 @@ package NIC_pkg is
     constant STD_FIFO_DATA_WIDTH    : integer := 16;
     constant STD_FIFO_FIFO_DEPTH    : integer := 8;
 
+    -- Optional TODO: partially constrained axi types using VHDL-2008:
+    -- https://www.doulos.com/knowhow/vhdl_designers_guide/vhdl_2008/vhdl_200x_small/#composite
+    -- https://forums.xilinx.com/t5/Simulation-and-Verification/generic-package-support-in-Vivado/td-p/895460 (last posts)
+    -- generic packages propably not supported (would maybe be useful for Arke_pkg dimensions and helper functions depending on dims)
     constant AXI4_FULL_DATA_WIDTH   : integer := 64;
     constant AXI4_FULL_ADDR_WIDTH   : integer := 32;
 
     type AXI4_Full_Wr_RqA is record
-        id      <= std_logic_vector( 11 downto 0 );
-        addr    <= std_logic_vector( AXI4_FULL_ADDR_WIDTH-1 downto 0 );
-        len     <= std_logic_vector(  3 downto 0 );
-        size    <= std_logic_vector(  2 downto 0 );
-        burst   <= std_logic_vector(  1 downto 0 );
-        lock    <= std_logic_vector(  1 downto 0 );
-        cache   <= std_logic_vector(  2 downto 0 );
-        prot    <= std_logic_vector(  2 downto 0 );
-        qos     <= std_logic_vector(  2 downto 0 );
+        id      : std_logic_vector( 11 downto 0 );
+        addr    : std_logic_vector( AXI4_FULL_ADDR_WIDTH-1 downto 0 );
+        len     : std_logic_vector(  3 downto 0 );
+        size    : std_logic_vector(  2 downto 0 );
+        burst   : std_logic_vector(  1 downto 0 );
+        lock    : std_logic_vector(  1 downto 0 );
+        cache   : std_logic_vector(  2 downto 0 );
+        prot    : std_logic_vector(  2 downto 0 );
+        qos     : std_logic_vector(  2 downto 0 );
     end record;
     constant AXI4_Full_Wr_RqA_WIDTH : integer := AXI4_FULL_ADDR_WIDTH + 32;
 
     type AXI4_Full_Wr_RqD is record
-        id      <= std_logic_vector( 11 downto 0 );
-        data    <= std_logic_vector( AXI4_FULL_DATA_WIDTH-1 downto 0 );
-        strb    <= std_logic_vector(  3 downto 0 );
-        last    <= std_logic;
+        id      : std_logic_vector( 11 downto 0 );
+        data    : std_logic_vector( AXI4_FULL_DATA_WIDTH-1 downto 0 );
+        strb    : std_logic_vector(  3 downto 0 );
+        last    : std_logic;
     end record;
     constant AXI4_Full_Wr_RqD_WIDTH : integer := AXI4_FULL_DATA_WIDTH + 17;
 
     type AXI4_Full_Wr_Rsp is record
-        id      <= std_logic_vector( 11 downto 0 );
-        resp    <= std_logic_vector(  1 downto 0 );
+        id      : std_logic_vector( 11 downto 0 );
+        resp    : std_logic_vector(  1 downto 0 );
     end record;
     constant AXI4_Full_Wr_Rsp_WIDTH : integer := 14;
 
     type AXI4_Full_Rd_RqA is record
-        id      <= std_logic_vector( 11 downto 0 );
-        addr    <= std_logic_vector( AXI4_FULL_ADDR_WIDTH-1 downto 0 );
-        len     <= std_logic_vector(  3 downto 0 );
-        size    <= std_logic_vector(  2 downto 0 );
-        burst   <= std_logic_vector(  1 downto 0 );
-        lock    <= std_logic_vector(  1 downto 0 );
-        cache   <= std_logic_vector(  2 downto 0 );
-        prot    <= std_logic_vector(  2 downto 0 );
-        qos     <= std_logic_vector(  2 downto 0 );
+        id      : std_logic_vector( 11 downto 0 );
+        addr    : std_logic_vector( AXI4_FULL_ADDR_WIDTH-1 downto 0 );
+        len     : std_logic_vector(  3 downto 0 );
+        size    : std_logic_vector(  2 downto 0 );
+        burst   : std_logic_vector(  1 downto 0 );
+        lock    : std_logic_vector(  1 downto 0 );
+        cache   : std_logic_vector(  2 downto 0 );
+        prot    : std_logic_vector(  2 downto 0 );
+        qos     : std_logic_vector(  2 downto 0 );
     end record;
     constant AXI4_Full_Rd_RqA_WIDTH : integer := AXI4_FULL_ADDR_WIDTH + 32;
 
     type AXI4_Full_Rd_Rsp is record
-        id      <= std_logic_vector( 11 downto 0 );
-        data    <= std_logic_vector( AXI4_FULL_DATA_WIDTH-1 downto 0 );
-        resp    <= std_logic_vector(  1 downto 0 );
-        last    <= std_logic;
+        id      : std_logic_vector( 11 downto 0 );
+        data    : std_logic_vector( AXI4_FULL_DATA_WIDTH-1 downto 0 );
+        resp    : std_logic_vector(  1 downto 0 );
+        last    : std_logic;
     end record;
     constant AXI4_Full_Rd_Rsp_WIDTH : integer := AXI4_FULL_DATA_WIDTH + 17;
     
