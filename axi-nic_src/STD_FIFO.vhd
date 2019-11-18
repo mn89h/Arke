@@ -1,22 +1,23 @@
-library IEEE;
-USE IEEE.STD_LOGIC_1164.ALL;
-USE IEEE.NUMERIC_STD.ALL;
-USE work.NIC_pkg.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+use work.NIC_pkg.all;
 
 entity STD_FIFO is
 	Generic (
-		data_width  : positive := DATA_WIDTH;
+		-- data_width  : positive := DATA_WIDTH;
+		type		: data_type; -- VHDL-2008+ / Vivado 2019.1+ - replaces data_width generic and (de-)serialize functions for vectors
 		fifo_depth	: positive := FIFO_DEPTH
 	);
 	Port ( 
-		clk		: in  STD_LOGIC;
-		rst		: in  STD_LOGIC;
-		WriteEn	: in  STD_LOGIC;
-		DataIn	: in  STD_LOGIC_VECTOR (data_width - 1 downto 0);
-		ReadEn	: in  STD_LOGIC;
-		DataOut	: out STD_LOGIC_VECTOR (data_width - 1 downto 0);
-		Empty	: out STD_LOGIC;
-		Full	: out STD_LOGIC
+		clk		: in  std_logic;
+		rst		: in  std_logic;
+		WriteEn	: in  std_logic;
+		DataIn	: in  data_type;
+		ReadEn	: in  std_logic;
+		DataOut	: out data_type;
+		Empty	: out std_logic;
+		Full	: out std_logic
 	);
 end STD_FIFO;
 
@@ -26,8 +27,8 @@ begin
 
 	-- Memory Pointer Process
 	fifo_proc : process (clk)
-		type FIFO_Memory is array (0 to fifo_depth - 1) of STD_LOGIC_VECTOR (data_width - 1 downto 0);
-		variable Memory : FIFO_Memory;
+		type fifo_memory is array (0 to fifo_depth - 1) of data_type;
+		variable Memory : fifo_memory;
 		
 		variable Head : natural range 0 to fifo_depth - 1;
 		variable Tail : natural range 0 to fifo_depth - 1;

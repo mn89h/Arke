@@ -11,18 +11,13 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
+use work.SERIALIZE_PKG.all;
 
 package NIC_pkg is
     
     ---------------
     -- Constants --
     ---------------
-                                        ---------------------
-                                        -- Parameterizable --
-                                        ---------------------
-    
-    -- Dimension X and Y need to be greater than 1, for 2D NoCs use Z = 1
-    -- X grows from left to right, Y grows from front to back, Z grows from bottom to top
     constant STD_FIFO_DATA_WIDTH    : integer := 16;
     constant STD_FIFO_FIFO_DEPTH    : integer := 8;
 
@@ -30,48 +25,95 @@ package NIC_pkg is
     constant AXI4_FULL_ADDR_WIDTH   : integer := 32;
 
     type AXI4_Full_Wr_RqA is record
-        id      <= std_logic_vector(11 downto 0);
-        addr    <= std_logic_vector(AXI4_FULL_ADDR_WIDTH-1 downto 0);
-        len     <= std_logic_vector(3 downto 0);
-        size    <= std_logic_vector(2 downto 0);
-        burst   <= std_logic_vector(1 downto 0);
-        lock    <= std_logic_vector(1 downto 0);
-        cache   <= std_logic_vector(2 downto 0);
-        prot    <= std_logic_vector(2 downto 0);
-        qos     <= std_logic_vector(2 downto 0);
+        id      <= std_logic_vector( 11 downto 0 );
+        addr    <= std_logic_vector( AXI4_FULL_ADDR_WIDTH-1 downto 0 );
+        len     <= std_logic_vector(  3 downto 0 );
+        size    <= std_logic_vector(  2 downto 0 );
+        burst   <= std_logic_vector(  1 downto 0 );
+        lock    <= std_logic_vector(  1 downto 0 );
+        cache   <= std_logic_vector(  2 downto 0 );
+        prot    <= std_logic_vector(  2 downto 0 );
+        qos     <= std_logic_vector(  2 downto 0 );
     end record;
+    constant AXI4_Full_Wr_RqA_WIDTH : integer := AXI4_FULL_ADDR_WIDTH + 32;
 
     type AXI4_Full_Wr_RqD is record
-        id      <= std_logic_vector(11 downto 0);
-        data    <= std_logic_vector(AXI4_FULL_DATA_WIDTH-1 downto 0);
-        strb    <= std_logic_vector(3 downto 0);
+        id      <= std_logic_vector( 11 downto 0 );
+        data    <= std_logic_vector( AXI4_FULL_DATA_WIDTH-1 downto 0 );
+        strb    <= std_logic_vector(  3 downto 0 );
         last    <= std_logic;
     end record;
+    constant AXI4_Full_Wr_RqD_WIDTH : integer := AXI4_FULL_DATA_WIDTH + 17;
 
     type AXI4_Full_Wr_Rsp is record
-        id      <= std_logic_vector(11 downto 0);
-        resp    <= std_logic_vector(1 downto 0);
+        id      <= std_logic_vector( 11 downto 0 );
+        resp    <= std_logic_vector(  1 downto 0 );
     end record;
+    constant AXI4_Full_Wr_Rsp_WIDTH : integer := 14;
 
     type AXI4_Full_Rd_RqA is record
-        id      <= std_logic_vector(11 downto 0);
-        addr    <= std_logic_vector(AXI4_FULL_ADDR_WIDTH-1 downto 0);
-        len     <= std_logic_vector(3 downto 0);
-        size    <= std_logic_vector(2 downto 0);
-        burst   <= std_logic_vector(1 downto 0);
-        lock    <= std_logic_vector(1 downto 0);
-        cache   <= std_logic_vector(2 downto 0);
-        prot    <= std_logic_vector(2 downto 0);
-        qos     <= std_logic_vector(2 downto 0);
+        id      <= std_logic_vector( 11 downto 0 );
+        addr    <= std_logic_vector( AXI4_FULL_ADDR_WIDTH-1 downto 0 );
+        len     <= std_logic_vector(  3 downto 0 );
+        size    <= std_logic_vector(  2 downto 0 );
+        burst   <= std_logic_vector(  1 downto 0 );
+        lock    <= std_logic_vector(  1 downto 0 );
+        cache   <= std_logic_vector(  2 downto 0 );
+        prot    <= std_logic_vector(  2 downto 0 );
+        qos     <= std_logic_vector(  2 downto 0 );
     end record;
+    constant AXI4_Full_Rd_RqA_WIDTH : integer := AXI4_FULL_ADDR_WIDTH + 32;
 
     type AXI4_Full_Rd_Rsp is record
-        id      <= std_logic_vector(11 downto 0);
-        data    <= std_logic_vector(AXI4_FULL_DATA_WIDTH-1 downto 0);
-        resp    <= std_logic_vector(1 downto 0);
+        id      <= std_logic_vector( 11 downto 0 );
+        data    <= std_logic_vector( AXI4_FULL_DATA_WIDTH-1 downto 0 );
+        resp    <= std_logic_vector(  1 downto 0 );
         last    <= std_logic;
     end record;
+    constant AXI4_Full_Rd_Rsp_WIDTH : integer := AXI4_FULL_DATA_WIDTH + 17;
     
-    
+    -- NOTE: Legacy, needed for <VHDL2008 / <Vivado2019.1
+    -- as discussed in https://stackoverflow.com/questions/3985694/serialize-vhdl-record
+    -- function serialize (
+    --     input : AXI4_Full_Wr_RqA
+    --     )
+    --     return std_logic_vector is
+    --         variable ser : serializer_t(AXI4_Full_Wr_RqA_WIDTH-1 downto 0);
+    --         variable r   : std_logic_vector(AXI4_Full_Wr_RqA_WIDTH-1 downto 0);
+    --     begin
+    --         serialize_init(ser);
+    --         serialize(ser, input.id);
+    --         serialize(ser, input.addr);
+    --         serialize(ser, input.len);
+    --         serialize(ser, input.size);
+    --         serialize(ser, input.burst);
+    --         serialize(ser, input.lock);
+    --         serialize(ser, input.cache);
+    --         serialize(ser, input.prot);
+    --         serialize(ser, input.qos);
+    --         r := serialize_get(ser);
+    --         return r;
+    -- end function serialize;
+
+
+    -- function deserialize (
+    --     input : std_logic_vector
+    --     )
+    --     return AXI4_Full_Wr_RqA is
+    --         variable ser : serializer_t(AXI4_Full_Wr_RqA_WIDTH-1 downto 0);
+    --         variable r   : AXI4_Full_Wr_RqA;
+    --     begin
+    --         ser := serialize_set(input);
+    --         deserialize(ser, r.id);
+    --         deserialize(ser, r.addr);
+    --         deserialize(ser, r.len);
+    --         deserialize(ser, r.size);
+    --         deserialize(ser, r.burst);
+    --         deserialize(ser, r.lock);
+    --         deserialize(ser, r.cache);
+    --         deserialize(ser, r.prot);
+    --         deserialize(ser, r.qos);
+    --         return r;
+    -- end function deserialize;
 
 end NIC_pkg;
