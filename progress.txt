@@ -25,6 +25,13 @@ Fixes?:
 - ports to io_buffer_type none (not possible? no ports in testbench, maybe ports in each ip?)
 - constraints?
 
+AXI:
+1. Bei Arbeit mit DataManager Probleme mit AXI in BSV, da generische Typen nicht unterstützt werden (unperformant)
+2. VHDL AXI Slave aus einem Template
+3. Signale komplett ausgetauscht, eigene AXI Typen erstellt, FIFO Instanzen zur Speicherung und Abruf der Reqs/Rsps
+4. Viele Themen zu VHDL Generics durchforstet und deren Kompatibilität mit Vivado (zB. generic types seit ca. 2019.1, generic constrained types möglich, generic packages jedoch nicht)
+
+
 Pynq:
 1. Fixed boot_image generation scripts
 2. Many problems, neither fpga_manager nor /dev/xdevcfg available, tried fixing by different pynq images
