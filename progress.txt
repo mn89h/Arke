@@ -1,0 +1,40 @@
+ModelSim install:
+https://yoloh3.github.io/linux/2016/12/24/install-modelsim-in-linux/
+export PATH=$PATH:/home/malte/opt/intelFPGA/16.1/modelsim_ase/linuxaloem
+export LD_LIBRARY_PATH=/home/malte/opt/intelFPGA/16.1/modelsim_ase/lib
+vlib work -> vcom ... -> vsim 
+www.people.vcu.edu/~rhklenke/tutaorials/vhdl/labs/lab1_tutorial.html
+
+Router:
+1. laid out interface arrays as top level cannot contain types other than logic ad logic_vector
+2. ip generation
+3. generated tcl for ip customization and generation of connected routers including algorithms to iterate over the dimensions
+4. updated generics in order to tie down unused ports and updated tcl to reflect these changes: https://www.xilinx.com/support/answers/65277.html
+5. fixed multi-driven ports caused by falsely specified port mapping
+
+DataManager:
+1. Edits in order to fill RAM during synthesis (init_ram funcion and edited process block with read, readfile)
+https://www.fpga4student.com/2018/08/how-to-read-image-in-vhdl.html
+2. generated ip 
+3. tcl for ip and router ip instantiation, difficulties with TextPackage and Types.
+4. tcl updated for full design creation (problems with clock generation) 
+5. testbench design can't be implemented as leaf cells remained in design after synthesis (VCC and GND). Probable Reason is that unused in and out pins are bound to zero
+Fixes?:
+- instead of tie off inside ip, tie off using xlconstant 0
+- maybe outputs aren't allowed to be tied off?
+- ports to io_buffer_type none (not possible? no ports in testbench, maybe ports in each ip?)
+- constraints?
+
+Pynq:
+1. Fixed boot_image generation scripts
+2. Many problems, neither fpga_manager nor /dev/xdevcfg available, tried fixing by different pynq images
+
+
+General:
+
+
+Vivado Remote Excecution:
+https://www.xilinx.com/support/documentation/sw_manuals/xilinx2017_2/ug904-vivado-implementation.pdf p.168
+
+Redshift for nightwork: redshift -b 0.4
+

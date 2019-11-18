@@ -63,6 +63,10 @@ for {set z 0} {$z < $DIM_Z} {incr z} {
         }
     }
 }
+create_bd_cell -type ip -vlnv xilinx.com:ip:xlconstant:1.1 xlconstant_0
+create_bd_cell -type ip -vlnv xilinx.com:ip:xlconstant:1.1 xlconstant_1
+set_property -dict [list CONFIG.CONST_WIDTH {16}] [get_bd_cells xlconstant_0]
+set_property -dict [list CONFIG.CONST_WIDTH {3}]  [get_bd_cells xlconstant_1]
 
 for {set z 0} {$z < $DIM_Z} {incr z} {
     for {set y 0} {$y < $DIM_Y} {incr y} {
@@ -92,46 +96,64 @@ for {set z 0} {$z < $DIM_Z} {incr z} {
                 connect_bd_net [get_bd_pins Router_$x\_$y\_$z/control_in_up]  [get_bd_pins Router_$x\_$y\_[expr $z+1]/control_out_down]
             }
             if { $x == 0 } then {
-                set_property -dict [list CONFIG.use_data_in_west        {false}] [get_bd_cells Router_$x\_$y\_$z]
-                set_property -dict [list CONFIG.use_control_in_west     {false}] [get_bd_cells Router_$x\_$y\_$z]
+                connect_bd_net [get_bd_pins Router_$x\_$y\_$z/data_in_west]     [get_bd_pins xlconstant_0/dout]
+                connect_bd_net [get_bd_pins Router_$x\_$y\_$z/control_in_west]  [get_bd_pins xlconstant_1/dout]
+                #set_property -dict [list CONFIG.use_data_in_west        {false}] [get_bd_cells Router_$x\_$y\_$z]
+                #set_property -dict [list CONFIG.use_control_in_west     {false}] [get_bd_cells Router_$x\_$y\_$z]
                 set_property -dict [list CONFIG.use_data_out_west       {false}] [get_bd_cells Router_$x\_$y\_$z]
                 set_property -dict [list CONFIG.use_control_out_west    {false}] [get_bd_cells Router_$x\_$y\_$z]
             }
             if { $x == $DIM_X-1 } then {
-                set_property -dict [list CONFIG.use_data_in_east        {false}] [get_bd_cells Router_$x\_$y\_$z]
-                set_property -dict [list CONFIG.use_control_in_east     {false}] [get_bd_cells Router_$x\_$y\_$z]
+                connect_bd_net [get_bd_pins Router_$x\_$y\_$z/data_in_east]     [get_bd_pins xlconstant_0/dout]
+                connect_bd_net [get_bd_pins Router_$x\_$y\_$z/control_in_east]  [get_bd_pins xlconstant_1/dout]
+                #set_property -dict [list CONFIG.use_data_in_east        {false}] [get_bd_cells Router_$x\_$y\_$z]
+                #set_property -dict [list CONFIG.use_control_in_east     {false}] [get_bd_cells Router_$x\_$y\_$z]
                 set_property -dict [list CONFIG.use_data_out_east       {false}] [get_bd_cells Router_$x\_$y\_$z]
                 set_property -dict [list CONFIG.use_control_out_east    {false}] [get_bd_cells Router_$x\_$y\_$z]
             }
             if { $y == 0 } then {
-                set_property -dict [list CONFIG.use_data_in_south        {false}] [get_bd_cells Router_$x\_$y\_$z]
-                set_property -dict [list CONFIG.use_control_in_south     {false}] [get_bd_cells Router_$x\_$y\_$z]
+                connect_bd_net [get_bd_pins Router_$x\_$y\_$z/data_in_south]     [get_bd_pins xlconstant_0/dout]
+                connect_bd_net [get_bd_pins Router_$x\_$y\_$z/control_in_south]  [get_bd_pins xlconstant_1/dout]
+                #set_property -dict [list CONFIG.use_data_in_south        {false}] [get_bd_cells Router_$x\_$y\_$z]
+                #set_property -dict [list CONFIG.use_control_in_south     {false}] [get_bd_cells Router_$x\_$y\_$z]
                 set_property -dict [list CONFIG.use_data_out_south       {false}] [get_bd_cells Router_$x\_$y\_$z]
                 set_property -dict [list CONFIG.use_control_out_south    {false}] [get_bd_cells Router_$x\_$y\_$z]
             }
             if { $y == $DIM_Y-1 } then {
-                set_property -dict [list CONFIG.use_data_in_north        {false}] [get_bd_cells Router_$x\_$y\_$z]
-                set_property -dict [list CONFIG.use_control_in_north     {false}] [get_bd_cells Router_$x\_$y\_$z]
+                connect_bd_net [get_bd_pins Router_$x\_$y\_$z/data_in_north]     [get_bd_pins xlconstant_0/dout]
+                connect_bd_net [get_bd_pins Router_$x\_$y\_$z/control_in_north]  [get_bd_pins xlconstant_1/dout]
+                #set_property -dict [list CONFIG.use_data_in_north        {false}] [get_bd_cells Router_$x\_$y\_$z]
+                #set_property -dict [list CONFIG.use_control_in_north     {false}] [get_bd_cells Router_$x\_$y\_$z]
                 set_property -dict [list CONFIG.use_data_out_north       {false}] [get_bd_cells Router_$x\_$y\_$z]
                 set_property -dict [list CONFIG.use_control_out_north    {false}] [get_bd_cells Router_$x\_$y\_$z]
             }
             if { $z == 0 } then {
-                set_property -dict [list CONFIG.use_data_in_down        {false}] [get_bd_cells Router_$x\_$y\_$z]
-                set_property -dict [list CONFIG.use_control_in_down     {false}] [get_bd_cells Router_$x\_$y\_$z]
+                connect_bd_net [get_bd_pins Router_$x\_$y\_$z/data_in_down]     [get_bd_pins xlconstant_0/dout]
+                connect_bd_net [get_bd_pins Router_$x\_$y\_$z/control_in_down]  [get_bd_pins xlconstant_1/dout]
+                #set_property -dict [list CONFIG.use_data_in_down        {false}] [get_bd_cells Router_$x\_$y\_$z]
+                #set_property -dict [list CONFIG.use_control_in_down     {false}] [get_bd_cells Router_$x\_$y\_$z]
                 set_property -dict [list CONFIG.use_data_out_down       {false}] [get_bd_cells Router_$x\_$y\_$z]
                 set_property -dict [list CONFIG.use_control_out_down    {false}] [get_bd_cells Router_$x\_$y\_$z]
             }
             if { $z == $DIM_Z-1 } then {
-                set_property -dict [list CONFIG.use_data_in_up        {false}] [get_bd_cells Router_$x\_$y\_$z]
-                set_property -dict [list CONFIG.use_control_in_up     {false}] [get_bd_cells Router_$x\_$y\_$z]
+                connect_bd_net [get_bd_pins Router_$x\_$y\_$z/data_in_up]     [get_bd_pins xlconstant_0/dout]
+                connect_bd_net [get_bd_pins Router_$x\_$y\_$z/control_in_up]  [get_bd_pins xlconstant_1/dout]
+                #set_property -dict [list CONFIG.use_data_in_up        {false}] [get_bd_cells Router_$x\_$y\_$z]
+                #set_property -dict [list CONFIG.use_control_in_up     {false}] [get_bd_cells Router_$x\_$y\_$z]
                 set_property -dict [list CONFIG.use_data_out_up       {false}] [get_bd_cells Router_$x\_$y\_$z]
                 set_property -dict [list CONFIG.use_control_out_up    {false}] [get_bd_cells Router_$x\_$y\_$z]
             }
         }
     }
 }
+create_bd_port -dir I -type clk clkin
+set_property CONFIG.FREQ_HZ 100000000 [get_bd_ports clkin]
+apply_bd_automation -rule xilinx.com:bd_rule:clkrst -config {Clk "/clkin (100 MHz)" }  [get_bd_pins proc_sys_reset_0/slowest_sync_clk]
+apply_bd_automation -rule xilinx.com:bd_rule:board -config { Manual_Source {Auto}}  [get_bd_pins proc_sys_reset_0/ext_reset_in]
 
 set_property -dict [list CONFIG.PCW_USE_M_AXI_GP0 {0}] [get_bd_cells processing_system7_0]
 update_compile_order -fileset sources_1
 make_wrapper -files [get_files /home/malte/noc_benchmark3/noc_benchmark3.srcs/sources_1/bd/design_1/design_1.bd] -top
 add_files -norecurse /home/malte/noc_benchmark3/noc_benchmark3.srcs/sources_1/bd/design_1/hdl/design_1_wrapper.v
+
+#system reset and clkin port, then connection automation

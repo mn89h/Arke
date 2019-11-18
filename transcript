@@ -1,6 +1,7 @@
+# OpenFile simulation/NoC_tb.vhd
 vsim work.noc_tb
 # vsim work.noc_tb 
-# Start time: 21:24:35 on Oct 21,2019
+# Start time: 04:08:10 on Nov 02,2019
 # Loading std.standard
 # Loading std.textio(body)
 # Loading ieee.std_logic_1164(body)
@@ -11677,41 +11678,22 @@ run
 # ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
 #    Time: 0 ns  Iteration: 2  Region: /noc_tb/ARKE/MESH_3D/Z_COORD(2)/Y_COORD(2)/X_COORD(2)/RIGHT_BACK_TOP_CORNER/ROUTER_XYZ/CROSSBARX/MESH_3D/STALLGO(6)
 run
+run
+run 5
 add wave -position end  sim:/noc_tb/clk
-add wave -position end  sim:/noc_tb/rst
-add wave -position end  sim:/noc_tb/data_in(0)(0)(0)
-add wave -position end  sim:/noc_tb/data_out(0)(0)(0)
+run 5
+add wave -position end  sim:/noc_tb/data_out
+add wave -position end  sim:/noc_tb/data_in
+run 10000
+run 10000
+run 10000
+run 10000
+run 10000
+run -all
+# Break key hit
+# Break in Process line__55 at src/InputBuffer.vhd line 55
 
-run
-
-run
-run
-run
-run
-run
-run
-run
-run
-run
-run
-run
-run
-run 5
-run 5
-run 5
-run 5
-run 5
-run 5
-run 5
-run 5
-run 5
-run 5
-run 50
-run 50
-run 50
-run 50
-run 50
-run 50
-run 50
-# End time: 15:07:12 on Oct 22,2019, Elapsed time: 17:42:37
+stop
+# Break key hit
+# End time: 04:29:35 on Nov 02,2019, Elapsed time: 0:21:25
 # Errors: 0, Warnings: 5834

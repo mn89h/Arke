@@ -110,7 +110,7 @@ begin
     data_in(WEST)       <= data_in_west;
     data_in(NORTH)      <= data_in_north;
     data_in(UP)         <= data_in_up           when PORTS = 7;
-    data_in(UP)         <= data_in_down         when PORTS = 7;
+    data_in(DOWN)       <= data_in_down         when PORTS = 7;
     
     control_in(LOCAL)   <= control_in_local;
     control_in(EAST)    <= control_in_east;
@@ -118,7 +118,7 @@ begin
     control_in(WEST)    <= control_in_west;
     control_in(NORTH)   <= control_in_north;
     control_in(UP)      <= control_in_up        when PORTS = 7;
-    control_in(UP)      <= control_in_down      when PORTS = 7;
+    control_in(DOWN)    <= control_in_down      when PORTS = 7;
 
     
     data_out_local      <= data_out(LOCAL);
