@@ -30,7 +30,6 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use work.NIC_pkg.all;
-use work.FIFO_pkg.all;
 
 entity AXI4_Full_Slave is
   port (
@@ -155,7 +154,7 @@ begin
 
     FIFO_WRRQA: STD_FIFO
     generic map(
-        data_type       => AXI4_Full_Wr_RqA;
+        data_type       => AXI4_Full_Wr_RqA,
         fifo_depth      => 2
     )
     port map(
@@ -172,7 +171,7 @@ begin
 
     FIFO_WRRQD: STD_FIFO
     generic map(
-        data_type       => AXI4_Full_Wr_RqD;
+        data_type       => AXI4_Full_Wr_RqD,
         fifo_depth      => 2
     )
     port map(
@@ -189,7 +188,7 @@ begin
     
     FIFO_RDRQA: STD_FIFO
     generic map(
-        data_type       => AXI4_Full_Rd_RqA;
+        data_type       => AXI4_Full_Rd_RqA,
         fifo_depth      => 2
     )
     port map(
@@ -206,7 +205,7 @@ begin
 
     FIFO_RDRSP: STD_FIFO
     generic map(
-        data_type       => AXI4_Full_Rd_Rsp;
+        data_type       => AXI4_Full_Rd_Rsp,
         fifo_depth      => 2
     )
     port map(
@@ -223,7 +222,7 @@ begin
 
     FIFO_WRRSP: STD_FIFO
     generic map(
-        data_type       => AXI4_Full_Wr_Rsp;
+        data_type       => AXI4_Full_Wr_Rsp,
         fifo_depth      => 2
     )
     port map(

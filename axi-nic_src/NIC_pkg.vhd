@@ -18,6 +18,26 @@ package NIC_pkg is
     ---------------
     -- Constants --
     ---------------
+
+    component STD_FIFO is
+        Generic (
+            -- fifo_width  : positive := FIFO_WIDTH;
+            type		  data_type; -- VHDL-2008+ / Vivado 2019.1+ - replaces vectors w/ fifo_width generic and (de-)serialize functions
+            fifo_depth	: positive
+        );
+        Port ( 
+            clk		: in  std_logic;
+            rst		: in  std_logic;
+            WriteEn	: in  std_logic;
+            DataIn	: in  data_type;
+            ReadEn	: in  std_logic;
+            DataOut	: out data_type;
+            Empty	: out std_logic;
+            Full	: out std_logic
+        );
+    end component;
+
+
     constant STD_FIFO_DATA_WIDTH    : integer := 16;
     constant STD_FIFO_FIFO_DEPTH    : integer := 8;
 

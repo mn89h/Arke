@@ -48,6 +48,96 @@ R10
 R11
 !i113 1
 R12
+Eaxi4_full_master
+Z14 w1574122172
+Z15 DPx4 work 13 serialize_pkg 0 22 h@Y1Gg3[VNdLbOCI1dJHn0
+Z16 DPx4 work 7 nic_pkg 0 22 J;Pzd1gVc__;Zl<Ihbd>Z2
+R1
+R2
+R3
+Z17 d/home/malte/Arke
+Z18 8axi-nic_src/AXI4_Full_Master.vhd
+Z19 Faxi-nic_src/AXI4_Full_Master.vhd
+l0
+L34
+Vahb6VC8AZ2iZU9EPihNez3
+!s100 R>f4@zCFL_Y@ZN9EWBDXT3
+R7
+33
+Z20 !s110 1574122175
+!i10b 1
+Z21 !s108 1574122175.000000
+Z22 !s90 -2008|axi-nic_src/AXI4_Full_Master.vhd|
+Z23 !s107 axi-nic_src/AXI4_Full_Master.vhd|
+!i113 1
+Z24 o-2008
+R12
+Abehavioral
+R15
+R16
+R1
+R2
+R3
+DEx4 work 16 axi4_full_master 0 22 ahb6VC8AZ2iZU9EPihNez3
+l153
+L152
+V6nS;=:nD`KmZmI]@RNJ?Z3
+!s100 3QF[SZ`o4=3a]cRNLd5431
+R7
+33
+R20
+!i10b 1
+R21
+R22
+R23
+!i113 1
+R24
+R12
+Eaxi4_full_slave
+Z25 w1574121640
+R15
+R16
+R1
+R2
+R3
+R17
+Z26 8axi-nic_src/AXI4_Full_Slave.vhd
+Z27 Faxi-nic_src/AXI4_Full_Slave.vhd
+l0
+L34
+V@HG`8;1TfzY1nW6YS0_VU1
+!s100 2@O6fWe:P?UCRmz22J1d>3
+R7
+33
+Z28 !s110 1574121846
+!i10b 1
+Z29 !s108 1574121846.000000
+Z30 !s90 -2008|axi-nic_src/AXI4_Full_Slave.vhd|
+Z31 !s107 axi-nic_src/AXI4_Full_Slave.vhd|
+!i113 1
+R24
+R12
+Abehavioral
+R15
+R16
+R1
+R2
+R3
+DEx4 work 15 axi4_full_slave 0 22 @HG`8;1TfzY1nW6YS0_VU1
+l153
+L152
+V7^n5ZcE8=?`bLVFEY>XD[0
+!s100 Xi>kCU=XJolZVCa=]L3o73
+R7
+33
+R28
+!i10b 1
+R29
+R30
+R31
+!i113 1
+R24
+R12
 Ecrossbar
 R4
 R13
@@ -55,19 +145,19 @@ R1
 R2
 R3
 R0
-Z14 8src/Crossbar.vhd
-Z15 Fsrc/Crossbar.vhd
+Z32 8src/Crossbar.vhd
+Z33 Fsrc/Crossbar.vhd
 l0
 L16
 VoWIkcF`G0FES;PFSE8mZG3
 !s100 ?M6M7i>Vk]f;Sd?>6>WGi0
 R7
 32
-Z16 !s110 1571683615
+Z34 !s110 1571683615
 !i10b 1
-Z17 !s108 1571683615.000000
-Z18 !s90 src/Crossbar.vhd|
-Z19 !s107 src/Crossbar.vhd|
+Z35 !s108 1571683615.000000
+Z36 !s90 src/Crossbar.vhd|
+Z37 !s107 src/Crossbar.vhd|
 !i113 1
 R12
 Afull
@@ -82,54 +172,54 @@ VE?c7UjD3fn?9fY>Tm;_Vb3
 !s100 2ZXnG;=>BKCVnCXNGDCY[1
 R7
 32
-R16
+R34
 !i10b 1
-R17
-R18
-R19
+R35
+R36
+R37
 !i113 1
 R12
 Edatamanager
 R4
 R13
 R1
-Z20 DPx4 work 12 text_package 0 22 mci>o]AFhZzo1Al<zV<4o1
+Z38 DPx4 work 12 text_package 0 22 mci>o]AFhZzo1Al<zV<4o1
 R2
 R3
 R0
-Z21 8simulation/DataManager.vhd
-Z22 Fsimulation/DataManager.vhd
+Z39 8simulation/DataManager.vhd
+Z40 Fsimulation/DataManager.vhd
 l0
 L18
 V_7SX`JQ2JT=`@=ZH14JF60
 !s100 HM87f8lgl>[[mNWYJJJ7D3
 R7
 32
-Z23 !s110 1571683652
+Z41 !s110 1571683652
 !i10b 1
-Z24 !s108 1571683651.000000
-Z25 !s90 simulation/DataManager.vhd|
-Z26 !s107 simulation/DataManager.vhd|
+Z42 !s108 1571683651.000000
+Z43 !s90 simulation/DataManager.vhd|
+Z44 !s107 simulation/DataManager.vhd|
 !i113 1
 R12
 Abehavioral
 R13
 R1
-R20
+R38
 R2
 R3
-Z27 DEx4 work 11 datamanager 0 22 _7SX`JQ2JT=`@=ZH14JF60
+Z45 DEx4 work 11 datamanager 0 22 _7SX`JQ2JT=`@=ZH14JF60
 l36
 L35
 VjeiPS?;ha5=RY>H;E`W`a2
 !s100 d1IakFcLGg]5A>zSMERo<2
 R7
 32
-R23
+R41
 !i10b 1
-R24
-R25
-R26
+R42
+R43
+R44
 !i113 1
 R12
 Einputbuffer
@@ -139,19 +229,19 @@ R1
 R2
 R3
 R0
-Z28 8src/InputBuffer.vhd
-Z29 Fsrc/InputBuffer.vhd
+Z46 8src/InputBuffer.vhd
+Z47 Fsrc/InputBuffer.vhd
 l0
 L16
 VTZ]>K]YB7M0?eR@9<M9730
 !s100 4NbQ9ia`4_5RATo_7CnQe0
 R7
 32
-Z30 !s110 1571683620
+Z48 !s110 1571683620
 !i10b 1
-Z31 !s108 1571683620.000000
-Z32 !s90 src/InputBuffer.vhd|
-Z33 !s107 src/InputBuffer.vhd|
+Z49 !s108 1571683620.000000
+Z50 !s90 src/InputBuffer.vhd|
+Z51 !s107 src/InputBuffer.vhd|
 !i113 1
 R12
 Apipeline_3_cycles
@@ -159,18 +249,18 @@ R13
 R1
 R2
 R3
-Z34 DEx4 work 11 inputbuffer 0 22 TZ]>K]YB7M0?eR@9<M9730
+Z52 DEx4 work 11 inputbuffer 0 22 TZ]>K]YB7M0?eR@9<M9730
 l164
 L149
 Vc=nLz4:HNRLmgL@fW@<3a3
 !s100 _R7KeSzVVhF@<]OZ0FzPE0
 R7
 32
-R30
+R48
 !i10b 1
-R31
-R32
-R33
+R49
+R50
+R51
 !i113 1
 R12
 Apipeline_4_cycles
@@ -178,19 +268,42 @@ R13
 R1
 R2
 R3
-R34
+R52
 l50
 L35
 Vi?:n3FaD41Bz@7W?5ma]V1
 !s100 APPc]G`n;E2@@E=Og]:3i2
 R7
 32
-R30
+R48
 !i10b 1
-R31
-R32
-R33
+R49
+R50
+R51
 !i113 1
+R12
+Pnic_pkg
+R15
+R1
+R2
+R3
+w1574121791
+R17
+8axi-nic_src/NIC_pkg.vhd
+Faxi-nic_src/NIC_pkg.vhd
+l0
+L16
+VJ;Pzd1gVc__;Zl<Ihbd>Z2
+!s100 57j7B9Si4kOJgX2@e@e1b2
+R7
+33
+!s110 1574121803
+!i10b 1
+!s108 1574121803.000000
+!s90 -2008|axi-nic_src/NIC_pkg.vhd|
+!s107 axi-nic_src/NIC_pkg.vhd|
+!i113 1
+R24
 R12
 Enoc
 R4
@@ -199,19 +312,19 @@ R13
 R2
 R3
 R0
-Z35 8src/NoC.vhd
-Z36 Fsrc/NoC.vhd
+Z53 8src/NoC.vhd
+Z54 Fsrc/NoC.vhd
 l0
 L17
 V[CfIWJ0OEX^V_z0PFG4AS2
 !s100 <7FUUTamaGUPJdC?CJbfW2
 R7
 32
-Z37 !s110 1571750842
+Z55 !s110 1571750842
 !i10b 1
-Z38 !s108 1571750841.000000
-Z39 !s90 src/NoC.vhd|
-Z40 !s107 src/NoC.vhd|
+Z56 !s108 1571750841.000000
+Z57 !s90 src/NoC.vhd|
+Z58 !s107 src/NoC.vhd|
 !i113 1
 R12
 Astructural
@@ -219,49 +332,49 @@ R1
 R13
 R2
 R3
-Z41 DEx4 work 3 noc 0 22 [CfIWJ0OEX^V_z0PFG4AS2
+Z59 DEx4 work 3 noc 0 22 [CfIWJ0OEX^V_z0PFG4AS2
 l54
 L31
 VW:mQ=OlYC6QIQ6zFZo_TZ1
 !s100 lN8981b`^JSa?PgAlcCzB2
 R7
 32
-R37
+R55
 !i10b 1
-R38
-R39
-R40
+R56
+R57
+R58
 !i113 1
 R12
 Enoc_tb
-Z42 w1571682240
+Z60 w1571682240
 R13
 R1
-R20
+R38
 R2
 R3
 R0
-Z43 8simulation/NoC_tb.vhd
-Z44 Fsimulation/NoC_tb.vhd
+Z61 8simulation/NoC_tb.vhd
+Z62 Fsimulation/NoC_tb.vhd
 l0
 L16
 V^nNoOJ4EI<TR5^Sz_6fRC3
 !s100 ZZ;0n[X=61kG<oWb:iQG^3
 R7
 32
-Z45 !s110 1571683653
+Z63 !s110 1571683653
 !i10b 1
-Z46 !s108 1571683653.000000
-Z47 !s90 simulation/NoC_tb.vhd|
-Z48 !s107 simulation/NoC_tb.vhd|
+Z64 !s108 1571683653.000000
+Z65 !s90 simulation/NoC_tb.vhd|
+Z66 !s107 simulation/NoC_tb.vhd|
 !i113 1
 R12
 Anoc_tb
-R41
-R27
+R59
+R45
 R13
 R1
-R20
+R38
 R2
 R3
 DEx4 work 6 noc_tb 0 22 ^nNoOJ4EI<TR5^Sz_6fRC3
@@ -271,38 +384,38 @@ V7DU]kdQ?=5S02RAd_zS632
 !s100 mmmm`KGcPKPe5T1eJh:D@3
 R7
 32
-R45
+R63
 !i10b 1
-R46
-R47
-R48
+R64
+R65
+R66
 !i113 1
 R12
 Enoc_wrapper
-Z49 w1571758061
+Z67 w1571758061
 R1
 R13
 R2
 R3
 R0
-Z50 8src/NoCWrapper.vhd
-Z51 Fsrc/NoCWrapper.vhd
+Z68 8src/NoCWrapper.vhd
+Z69 Fsrc/NoCWrapper.vhd
 l0
 L16
 V7klM`f7DoToV0ZZ>a[3n?2
 !s100 ;HO]jPUk_DO=FP6YCZlYl2
 R7
 33
-Z52 !s110 1571758065
+Z70 !s110 1571758065
 !i10b 1
-Z53 !s108 1571758064.000000
-Z54 !s90 src/NoCWrapper.vhd|-2008|
-Z55 !s107 src/NoCWrapper.vhd|
+Z71 !s108 1571758064.000000
+Z72 !s90 src/NoCWrapper.vhd|-2008|
+Z73 !s107 src/NoCWrapper.vhd|
 !i113 1
-Z56 o-2008
+R24
 R12
 Astructural
-R41
+R59
 R1
 R13
 R2
@@ -314,13 +427,13 @@ V<AZgV_2LcdX^8C@M3JX@C2
 !s100 m]Ec_9f;FgKk_doNbTG9T3
 R7
 33
-R52
+R70
 !i10b 1
-R53
-R54
-R55
+R71
+R72
+R73
 !i113 1
-R56
+R24
 R12
 Eprogramablepriorityencoder
 R4
@@ -329,19 +442,19 @@ R1
 R2
 R3
 R0
-Z57 8src/ProgramablePriorityEncoder.vhd
-Z58 Fsrc/ProgramablePriorityEncoder.vhd
+Z74 8src/ProgramablePriorityEncoder.vhd
+Z75 Fsrc/ProgramablePriorityEncoder.vhd
 l0
 L15
 VicQQ:zj^KQ4a6IKa[<>gL3
 !s100 b8aa>`OmD3:QJJ_QR>T4n1
 R7
 32
-Z59 !s110 1571683629
+Z76 !s110 1571683629
 !i10b 1
-Z60 !s108 1571683629.000000
-Z61 !s90 src/ProgramablePriorityEncoder.vhd|
-Z62 !s107 src/ProgramablePriorityEncoder.vhd|
+Z77 !s108 1571683629.000000
+Z78 !s90 src/ProgramablePriorityEncoder.vhd|
+Z79 !s107 src/ProgramablePriorityEncoder.vhd|
 !i113 1
 R12
 Abehavioral
@@ -356,11 +469,11 @@ VL6G1fO4noOJ^YFzaEPDZF2
 !s100 o4oV@;GjJbKXZPo6IVRoJ3
 R7
 32
-R59
+R76
 !i10b 1
-R60
-R61
-R62
+R77
+R78
+R79
 !i113 1
 R12
 Erouter
@@ -370,23 +483,23 @@ R13
 R2
 R3
 R0
-Z63 8src/Router.vhd
-Z64 Fsrc/Router.vhd
+Z80 8src/Router.vhd
+Z81 Fsrc/Router.vhd
 l0
 L16
 VW^MkaD6]DZ70mIZKgkM3a3
 !s100 _LzhO_:RQaAIK3LB_lQW21
 R7
 32
-Z65 !s110 1571683634
+Z82 !s110 1571683634
 !i10b 1
-Z66 !s108 1571683634.000000
-Z67 !s90 src/Router.vhd|
-Z68 !s107 src/Router.vhd|
+Z83 !s108 1571683634.000000
+Z84 !s90 src/Router.vhd|
+Z85 !s107 src/Router.vhd|
 !i113 1
 R12
 Arouter
-R34
+R52
 R1
 R13
 R2
@@ -398,12 +511,95 @@ V8=KKBOO@n7k`SUFF@AAP?2
 !s100 Cl;:lU`jkzDG5zo;XlYkL3
 R7
 32
-R65
+R82
 !i10b 1
-R66
-R67
-R68
+R83
+R84
+R85
 !i113 1
+R12
+Pserialize_pkg
+R2
+R3
+Z86 w1574111008
+R17
+Z87 8axi-nic_src/SERIALIZE_pkg.vhd
+Z88 Faxi-nic_src/SERIALIZE_pkg.vhd
+l0
+L35
+Vh@Y1Gg3[VNdLbOCI1dJHn0
+!s100 YhW]ULokS?BIMazZ_kGT42
+R7
+32
+b1
+Z89 !s110 1574121075
+!i10b 1
+Z90 !s108 1574121075.000000
+Z91 !s90 axi-nic_src/SERIALIZE_pkg.vhd|
+Z92 !s107 axi-nic_src/SERIALIZE_pkg.vhd|
+!i113 1
+R12
+Bbody
+R15
+R2
+R3
+l0
+L68
+V?KDiWIY;^97k[N]If?hZg1
+!s100 bW22ojCT^mi_nAaJ`9<>c1
+R7
+32
+R89
+!i10b 1
+R90
+R91
+R92
+!i113 1
+R12
+Estd_fifo
+Z93 w1574121548
+R15
+R16
+R1
+R2
+R3
+R17
+Z94 8axi-nic_src/FIFO_pkg.vhd
+Z95 Faxi-nic_src/FIFO_pkg.vhd
+l0
+L6
+V=nLm^;IC3R:iWIQCNJezl2
+!s100 ?Rk8>C;z3m__W5gY07HYm2
+R7
+33
+Z96 !s110 1574121810
+!i10b 1
+Z97 !s108 1574121810.000000
+Z98 !s90 -2008|axi-nic_src/FIFO_pkg.vhd|
+Z99 !s107 axi-nic_src/FIFO_pkg.vhd|
+!i113 1
+R24
+R12
+Abehavioral
+R15
+R16
+R1
+R2
+R3
+DEx4 work 8 std_fifo 0 22 =nLm^;IC3R:iWIQCNJezl2
+l26
+L24
+V^g4KjTSSlNBBaVU89GP302
+!s100 QYM<2Pn]V;150Z332Og@82
+R7
+33
+R96
+!i10b 1
+R97
+R98
+R99
+!i113 1
+R24
 R12
 Eswitchcontrol
 R4
@@ -412,19 +608,19 @@ R1
 R2
 R3
 R0
-Z69 8src/SwitchControl.vhd
-Z70 Fsrc/SwitchControl.vhd
+Z100 8src/SwitchControl.vhd
+Z101 Fsrc/SwitchControl.vhd
 l0
 L16
 VEXYWD0Vn]=hb1L0ZYOTCV3
 !s100 kzVb]Ld?_@Pe82k`M?DT?2
 R7
 32
-Z71 !s110 1571683639
+Z102 !s110 1571683639
 !i10b 1
-Z72 !s108 1571683639.000000
-Z73 !s90 src/SwitchControl.vhd|
-Z74 !s107 src/SwitchControl.vhd|
+Z103 !s108 1571683639.000000
+Z104 !s90 src/SwitchControl.vhd|
+Z105 !s107 src/SwitchControl.vhd|
 !i113 1
 R12
 Abehavioral
@@ -439,11 +635,11 @@ VTKf?NZKNf;0;4mB>B206k3
 !s100 X?D6kY2hcIDV`^=QZPd9n0
 R7
 32
-R71
+R102
 !i10b 1
-R72
-R73
-R74
+R103
+R104
+R105
 !i113 1
 R12
 Ptext_package
@@ -452,8 +648,8 @@ R2
 R3
 R4
 R0
-Z75 8simulation/Text_Package.vhd
-Z76 Fsimulation/Text_Package.vhd
+Z106 8simulation/Text_Package.vhd
+Z107 Fsimulation/Text_Package.vhd
 l0
 L14
 Vmci>o]AFhZzo1Al<zV<4o1
@@ -461,15 +657,15 @@ Vmci>o]AFhZzo1Al<zV<4o1
 R7
 32
 b1
-Z77 !s110 1571683600
+Z108 !s110 1571683600
 !i10b 1
-Z78 !s108 1571683600.000000
-Z79 !s90 simulation/Text_Package.vhd|
-Z80 !s107 simulation/Text_Package.vhd|
+Z109 !s108 1571683600.000000
+Z110 !s90 simulation/Text_Package.vhd|
+Z111 !s107 simulation/Text_Package.vhd|
 !i113 1
 R12
 Bbody
-R20
+R38
 R1
 R2
 R3
@@ -479,10 +675,10 @@ V39AHlNl7^lF>mj]]38J;M0
 !s100 bQI:gn<X?K?JbZ0OGeWQE3
 R7
 32
-R77
+R108
 !i10b 1
-R78
-R79
-R80
+R109
+R110
+R111
 !i113 1
 R12

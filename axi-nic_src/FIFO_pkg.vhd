@@ -3,12 +3,11 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use work.NIC_pkg.all;
 
-package FIFO_pkg is
 entity STD_FIFO is
 	Generic (
 		-- fifo_width  : positive := FIFO_WIDTH;
-		type		: data_type; -- VHDL-2008+ / Vivado 2019.1+ - replaces vectors w/ fifo_width generic and (de-)serialize functions
-		fifo_depth	: positive := FIFO_DEPTH
+		type		  data_type; -- VHDL-2008+ / Vivado 2019.1+ - replaces vectors w/ fifo_width generic and (de-)serialize functions
+		fifo_depth	: positive := STD_FIFO_FIFO_DEPTH
 	);
 	Port ( 
 		clk		: in  std_logic;
@@ -96,4 +95,3 @@ begin
 	end process;
 		
 end Behavioral;
-end FIFO_pkg;
