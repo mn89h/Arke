@@ -1,5 +1,7 @@
 ModelSim install:
 https://yoloh3.github.io/linux/2016/12/24/install-modelsim-in-linux/
+sudo dnf install ncurses-compat-libs.i686 ncurses-libs.i686 libX11.i686 libXext.i686 libXft.i686
+copy to lib: libfreetype <5.0.1 libfontconfig <? from repo or search archlinux and koji.fedoraproject.org
 export PATH=$PATH:/home/malte/opt/intelFPGA/16.1/modelsim_ase/linuxaloem
 export LD_LIBRARY_PATH=/home/malte/opt/intelFPGA/16.1/modelsim_ase/lib
 vlib work -> vcom ... -> vsim 
@@ -30,7 +32,7 @@ AXI:
 2. VHDL AXI Slave aus einem Template
 3. Signale komplett ausgetauscht, eigene AXI Typen erstellt, FIFO Instanzen zur Speicherung und Abruf der Reqs/Rsps
 4. Viele Themen zu VHDL Generics durchforstet und deren Kompatibilität mit Vivado (zB. generic types seit ca. 2019.1, generic constrained types möglich, generic packages jedoch nicht)
-
+5. Testbench
 
 Pynq:
 1. Fixed boot_image generation scripts
