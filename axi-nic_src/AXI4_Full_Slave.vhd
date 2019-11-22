@@ -152,9 +152,8 @@ end AXI4_Full_Slave;
 architecture Behavioral of AXI4_Full_Slave is
 begin
 
-    FIFO_WRRQA: STD_FIFO
+    FIFO_WRRQA: STD_FIFO_WrRqA
     generic map(
-        data_type       => AXI4_Full_Wr_RqA,
         fifo_depth      => 2
     )
     port map(
@@ -169,9 +168,8 @@ begin
         "NOT"(Full)     => AXI_awready      --out awready
     );
 
-    FIFO_WRRQD: STD_FIFO
+    FIFO_WRRQD: STD_FIFO_WrRqD
     generic map(
-        data_type       => AXI4_Full_Wr_RqD,
         fifo_depth      => 2
     )
     port map(
@@ -186,9 +184,8 @@ begin
         "NOT"(Full)     => AXI_wready       --out awready
     );
     
-    FIFO_RDRQA: STD_FIFO
+    FIFO_RDRQA: STD_FIFO_RdRqA
     generic map(
-        data_type       => AXI4_Full_Rd_RqA,
         fifo_depth      => 2
     )
     port map(
@@ -203,9 +200,8 @@ begin
         "NOT"(Full)     => AXI_arready      --out awready
     );
 
-    FIFO_RDRSP: STD_FIFO
+    FIFO_RDRSP: STD_FIFO_RdRsp
     generic map(
-        data_type       => AXI4_Full_Rd_Rsp,
         fifo_depth      => 2
     )
     port map(
@@ -220,9 +216,8 @@ begin
         "NOT"(Full)     => rdrsp_put_ready  --out external_ifc
     );
 
-    FIFO_WRRSP: STD_FIFO
+    FIFO_WRRSP: STD_FIFO_WrRsp
     generic map(
-        data_type       => AXI4_Full_Wr_Rsp,
         fifo_depth      => 2
     )
     port map(

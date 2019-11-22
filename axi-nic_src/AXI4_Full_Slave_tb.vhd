@@ -24,20 +24,25 @@
 -- https://www.itdev.co.uk/content/vhdl-testbench-generator-example
 library ieee;
 use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+use work.NIC_pkg.all;
+
+library vunit_lib;
+context vunit_lib.vunit_context;
 
 -------------------------------------------------------------------------------
 
 entity AXI4_Full_Slave_tb is
-
+  generic (runner_cfg : string := runner_cfg_default);
 end entity AXI4_Full_Slave_tb;
 
 -------------------------------------------------------------------------------
 
-architecture lol of AXI4_Full_Slave_tb is
+architecture tb1 of AXI4_Full_Slave_tb is
 
   -- component ports
-  signal clk             : std_logic;
-  signal rst             : std_logic;
+  signal clk             : std_logic := '1';
+  signal rst             : std_logic := '1';
   signal AXI_arvalid     : std_logic;
   signal AXI_arready     : std_logic;
   signal AXI_rdrqA_data  : AXI4_Full_Rd_RqA;
@@ -69,10 +74,10 @@ architecture lol of AXI4_Full_Slave_tb is
   signal wrrsp_put_en    : std_logic;
   signal wrrsp_put_data  : AXI4_Full_Wr_Rsp;
 
-  -- clock
-  signal Clk : std_logic := '1';
+  signal counter : integer := 0;
 
-begin  -- architecture lol
+
+begin  -- architecture tb1
 
   -- component instantiation
   DUT : entity work.AXI4_Full_Slave
@@ -111,55 +116,162 @@ begin  -- architecture lol
       wrrsp_put_data  => wrrsp_put_data);
 
   -- clock generation
-  Clk <= not Clk after 10 ns;
+  clk <= not clk after 10 ns;
+  rst <= '0' after 22 ns;
 
   -- waveform generation
   WaveGen_Proc : process
   procedure check_cycle (
-    constant axis_in_tready_value:  in std_logic;
-    constant axis_in_tvalid_value:  in std_logic;
-    constant axis_in_tdata_value:   in AXI4_Full_Rd_RqA;
-    constant axis_out_tready_value: in std_logic;
-    constant axis_out_tvalid_value: in std_logic;
-    constant axis_out_tdata_value:  in AXI4_Full_Rd_RqA
-) is
-begin
-    axis_in_tvalid <= axis_in_tvalid_value;
-    axis_in_tdata <= axis_in_tdata_value;
-    axis_out_tready <= axis_out_tready_value;
+    constant AXI_arvalid_value      : in std_logic;
+    constant AXI_arready_value      : in std_logic;
+    constant AXI_rdrqA_data_value   : in AXI4_Full_Rd_RqA;
+    constant rdrqA_get_valid_value  : in std_logic;
+    constant rdrqA_get_en_value     : in std_logic;
+    constant rdrqA_get_data_value   : in AXI4_Full_Rd_RqA
+  ) is
+  begin
     wait until rising_edge(clk);
-    if axis_in_tready_value /= 'X' then
-        assert axis_in_tready = axis_in_tready_value
-        report "axis_in_tready - expected '" & to_string(axis_in_tready_value) &
-            "' got '" & to_string(axis_in_tready) & "'";
-    end if;
-    if axis_out_tvalid_value /= 'X' then
-        assert axis_out_tvalid = axis_out_tvalid_value
-        report "axis_out_tvalid - expected '" & to_string(axis_out_tvalid_value) &
-            "' got '" & to_string(axis_out_tvalid) & "'";
-    end if;
-    if axis_out_tdata_value /= "XXXXXXXX" then
-        assert axis_out_tdata = axis_out_tdata_value
-        report "axis_out_tdata - expected " & to_string(to_integer(signed(axis_out_tdata_value))) &
-            " got " & to_string(to_integer(signed(axis_out_tdata)));
-    end if;
-end procedure check_cycle;
+    AXI_arvalid <= AXI_arvalid_value;
+    AXI_rdrqA_data <= AXI_rdrqA_data_value;
+    rdrqA_get_en <= rdrqA_get_en_value;
+    report "Check #" & to_string(counter);
+--    counter <= counter + 1;
+--    if AXI_arready_value /= 'X' then
+--        assert AXI_arready = AXI_arready_value
+--        report "AXI_arready - expected '" & to_string(AXI_arready_value) &
+--            "' got '" & to_string(AXI_arready) & "'. rst: " & to_string(rst);
+--    end if;
+--    if rdrqA_get_valid_value /= 'X' then
+--        assert rdrqA_get_valid = rdrqA_get_valid_value
+--        report "rdrqA_get_valid - expected '" & to_string(rdrqA_get_valid_value) &
+--            "' got '" & to_string(rdrqA_get_valid) & "'. rst: " & to_string(rst);
+--    end if;
+--    if rdrqA_get_data_value /= (
+--      id => "XXXXXXXXXXXX",
+--      addr => "XXXXXXXX",
+--      len => "XXXX",
+--      size => "XXX",
+--      burst => "XX",
+--      lock => "XX",
+--      cache => "XXX",
+--      prot => "XXX",
+--      qos => "XXX"
+--    ) then
+--        assert rdrqA_get_data = rdrqA_get_data_value
+--        report "rdrqA_get_data - expected " & to_string(to_integer(signed(rdrqA_get_data_value.addr))) &
+--            " got " & to_string(to_integer(signed(rdrqA_get_data.addr)));
+--    end if;
+  end procedure check_cycle;
     
   begin
-    -- insert signal assignments here
+    test_runner_setup(runner, runner_cfg);
 
-    wait until Clk = '1';
-  end process WaveGen_Proc;
+    while test_suite loop
+    if run("runner_cfg_default") then
+      --lol
+      -- Cycle 0 - arready correct?
+      check_cycle (
+        AXI_arready_value => '1',
+        AXI_arvalid_value => '1',
+        AXI_rdrqA_data_value => (
+          id => "000000000000",
+          addr => "01010101",
+          len => "0000",
+          size => "000",
+          burst => "00",
+          lock => "00",
+          cache => "000",
+          prot => "000",
+          qos => "000"
+        ),
+        rdrqA_get_en_value => '0',
+        rdrqA_get_valid_value => '0',
+        rdrqA_get_data_value => (
+          id => "XXXXXXXXXXXX",
+          addr => "XXXXXXXX",
+          len => "XXXX",
+          size => "XXX",
+          burst => "XX",
+          lock => "XX",
+          cache => "XXX",
+          prot => "XXX",
+          qos => "XXX"
+        )
+      );
+
+      -- Cycle 1 - get_valid correct?
+      check_cycle (
+        AXI_arready_value => '1',
+        AXI_arvalid_value => '0',
+        AXI_rdrqA_data_value => (
+          id => "000000000000",
+          addr => "01010101",
+          len => "0000",
+          size => "000",
+          burst => "00",
+          lock => "00",
+          cache => "000",
+          prot => "000",
+          qos => "000"
+        ),
+        rdrqA_get_en_value => '1',
+        rdrqA_get_valid_value => '0',
+        rdrqA_get_data_value => (
+          id => "XXXXXXXXXXXX",
+          addr => "XXXXXXXX",
+          len => "XXXX",
+          size => "XXX",
+          burst => "XX",
+          lock => "XX",
+          cache => "XXX",
+          prot => "XXX",
+          qos => "XXX"
+        )
+      );
+
+      -- Cycle 2 get_valid and get_data correct? arready correct?.
+      check_cycle (
+        AXI_arready_value => '1',
+        AXI_arvalid_value => '0',
+        AXI_rdrqA_data_value => (
+          id => "XXXXXXXXXXXX",
+          addr => "XXXXXXXX",
+          len => "XXXX",
+          size => "XXX",
+          burst => "XX",
+          lock => "XX",
+          cache => "XXX",
+          prot => "XXX",
+          qos => "XXX"
+        ),
+        rdrqA_get_en_value => '1',
+        rdrqA_get_valid_value => '0',
+        rdrqA_get_data_value => (
+          id => "000000000000",
+          addr => "01010101",
+          len => "0000",
+          size => "000",
+          burst => "00",
+          lock => "00",
+          cache => "000",
+          prot => "000",
+          qos => "000"
+        )
+      );
+    end if;
+  end loop;
+
+end process WaveGen_Proc;
 
 
 
-end architecture lol;
+end architecture tb1;
 
 -------------------------------------------------------------------------------
 
-configuration AXI4_Full_Slave_tb_lol_cfg of AXI4_Full_Slave_tb is
-  for lol
+configuration AXI4_Full_Slave_tb_tb1_cfg of AXI4_Full_Slave_tb is
+  for tb1
   end for;
-end AXI4_Full_Slave_tb_lol_cfg;
+end AXI4_Full_Slave_tb_tb1_cfg;
 
 -------------------------------------------------------------------------------

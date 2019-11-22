@@ -19,34 +19,19 @@ package NIC_pkg is
     -- Constants --
     ---------------
 
-    component STD_FIFO is
-        Generic (
-            -- fifo_width  : positive := FIFO_WIDTH;
-            type		  data_type; -- VHDL-2008+ / Vivado 2019.1+ - replaces vectors w/ fifo_width generic and (de-)serialize functions
-            fifo_depth	: positive
-        );
-        Port ( 
-            clk		: in  std_logic;
-            rst		: in  std_logic;
-            WriteEn	: in  std_logic;
-            DataIn	: in  data_type;
-            ReadEn	: in  std_logic;
-            DataOut	: out data_type;
-            Empty	: out std_logic;
-            Full	: out std_logic
-        );
-    end component;
 
 
     constant STD_FIFO_DATA_WIDTH    : integer := 16;
     constant STD_FIFO_FIFO_DEPTH    : integer := 8;
 
+    type STD_FIFO_TYPE is (WrRqA, WrRqD, RdRqA, WrRsp, RdRsp);
+
     -- Optional TODO: partially constrained axi types using VHDL-2008:
     -- https://www.doulos.com/knowhow/vhdl_designers_guide/vhdl_2008/vhdl_200x_small/#composite
     -- https://forums.xilinx.com/t5/Simulation-and-Verification/generic-package-support-in-Vivado/td-p/895460 (last posts)
     -- generic packages propably not supported (would maybe be useful for Arke_pkg dimensions and helper functions depending on dims)
-    constant AXI4_FULL_DATA_WIDTH   : integer := 64;
-    constant AXI4_FULL_ADDR_WIDTH   : integer := 32;
+    constant AXI4_FULL_DATA_WIDTH   : integer := 16;
+    constant AXI4_FULL_ADDR_WIDTH   : integer := 8;
 
     type AXI4_Full_Wr_RqA is record
         id      : std_logic_vector( 11 downto 0 );
@@ -95,7 +80,113 @@ package NIC_pkg is
         last    : std_logic;
     end record;
     constant AXI4_Full_Rd_Rsp_WIDTH : integer := AXI4_FULL_DATA_WIDTH + 17;
+
     
+
+
+
+
+
+    component STD_FIFO is
+        Generic (
+            -- fifo_width  : positive := FIFO_WIDTH;
+            type		  data_type; -- VHDL-2008+ / Vivado 2019.1+ - replaces vectors w/ fifo_width generic and (de-)serialize functions
+            fifo_depth	: positive
+        );
+        Port ( 
+            clk		: in  std_logic;
+            rst		: in  std_logic;
+            WriteEn	: in  std_logic;
+            DataIn	: in  data_type;
+            ReadEn	: in  std_logic;
+            DataOut	: out data_type;
+            Empty	: out std_logic;
+            Full	: out std_logic
+        );
+    end component;
+
+    component STD_FIFO_WrRqA is
+        Generic (
+            fifo_depth	: positive
+        );
+        Port ( 
+            clk		: in  std_logic;
+            rst		: in  std_logic;
+            WriteEn	: in  std_logic;
+            DataIn	: in  AXI4_Full_Wr_RqA;
+            ReadEn	: in  std_logic;
+            DataOut	: out AXI4_Full_Wr_RqA;
+            Empty	: out std_logic;
+            Full	: out std_logic
+        );
+    end component;
+
+    component STD_FIFO_WrRqD is
+        Generic (
+            fifo_depth	: positive
+        );
+        Port ( 
+            clk		: in  std_logic;
+            rst		: in  std_logic;
+            WriteEn	: in  std_logic;
+            DataIn	: in  AXI4_Full_Wr_RqD;
+            ReadEn	: in  std_logic;
+            DataOut	: out AXI4_Full_Wr_RqD;
+            Empty	: out std_logic;
+            Full	: out std_logic
+        );
+    end component;
+
+    component STD_FIFO_RdRqA is
+        Generic (
+            fifo_depth	: positive
+        );
+        Port ( 
+            clk		: in  std_logic;
+            rst		: in  std_logic;
+            WriteEn	: in  std_logic;
+            DataIn	: in  AXI4_Full_Rd_RqA;
+            ReadEn	: in  std_logic;
+            DataOut	: out AXI4_Full_Rd_RqA;
+            Empty	: out std_logic;
+            Full	: out std_logic
+        );
+    end component;
+
+    component STD_FIFO_RdRsp is
+        Generic (
+            fifo_depth	: positive
+        );
+        Port ( 
+            clk		: in  std_logic;
+            rst		: in  std_logic;
+            WriteEn	: in  std_logic;
+            DataIn	: in  AXI4_Full_Rd_Rsp;
+            ReadEn	: in  std_logic;
+            DataOut	: out AXI4_Full_Rd_Rsp;
+            Empty	: out std_logic;
+            Full	: out std_logic
+        );
+    end component;
+
+    component STD_FIFO_WrRsp is
+        Generic (
+            fifo_depth	: positive
+        );
+        Port ( 
+            clk		: in  std_logic;
+            rst		: in  std_logic;
+            WriteEn	: in  std_logic;
+            DataIn	: in  AXI4_Full_Wr_Rsp;
+            ReadEn	: in  std_logic;
+            DataOut	: out AXI4_Full_Wr_Rsp;
+            Empty	: out std_logic;
+            Full	: out std_logic
+        );
+    end component;
+
+
+
     -- NOTE: Legacy, needed for <VHDL2008 / <Vivado2019.1
     -- as discussed in https://stackoverflow.com/questions/3985694/serialize-vhdl-record
     -- function serialize (
