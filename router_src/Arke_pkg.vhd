@@ -31,13 +31,13 @@ package Arke_pkg is
     constant BUFFER_DEPTH : integer := 8; -- Buffer depth must be greater than 1 and a power of 2
     
     -- Data and control buses 
-    constant DATA_WIDTH     : integer := 16;                                                            
+    constant DATA_WIDTH     : integer := 128;                                                            
     constant CONTROL_WIDTH  : integer := 3;  
 
                                       -------------------------
                                       -- Not parameterizable --
                                       -------------------------
-    
+
     -- Control signals identification
     constant EOP        : integer := 0;
     constant RX         : integer := 1;
