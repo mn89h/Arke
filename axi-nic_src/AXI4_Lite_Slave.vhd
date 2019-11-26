@@ -129,7 +129,7 @@ entity AXI4_Lite_Slave is
     ---------------------------------
     rdrqA_get_valid : out std_logic;
     rdrqA_get_en    : in  std_logic;
-    rdrqA_get_data  : out AXI4_Lite_Rd_RqA;
+    rdrqA_get_data  : out AXI4_Lite_Rd_RqA; -- := ((others => '0'), (others => '0')); instantly overwritten
 
     wrrqA_get_valid : out std_logic;
     wrrqA_get_en    : in  std_logic;
@@ -139,12 +139,12 @@ entity AXI4_Lite_Slave is
     wrrqD_get_en    : in  std_logic;
     wrrqD_get_data  : out AXI4_Lite_Wr_RqD;
 
-    rdrsp_put_ready : out std_logic;
     rdrsp_put_en    : in  std_logic;
+    rdrsp_put_ready : out std_logic;
     rdrsp_put_data  : in  AXI4_Lite_Rd_Rsp;
 
-    wrrsp_put_ready : out std_logic;
     wrrsp_put_en    : in  std_logic;
+    wrrsp_put_ready : out std_logic;
     wrrsp_put_data  : in  AXI4_Lite_Wr_Rsp
     );
 end AXI4_Lite_Slave;
@@ -154,7 +154,7 @@ architecture Behavioral of AXI4_Lite_Slave is
     signal wrrqa_dataOut    : std_logic_vector(AXI4_Lite_Wr_RqA_WIDTH - 1 downto 0);
     signal wrrqd_dataIn     : std_logic_vector(AXI4_Lite_Wr_RqD_WIDTH - 1 downto 0);
     signal wrrqd_dataOut    : std_logic_vector(AXI4_Lite_Wr_RqD_WIDTH - 1 downto 0);
-    signal rdrqa_dataIn     : std_logic_vector(AXI4_Lite_Rd_RqA_WIDTH - 1 downto 0);
+    signal rdrqa_dataIn     : std_logic_vector(AXI4_Lite_Rd_RqA_WIDTH - 1 downto 0);-- := (others => '0');
     signal rdrqa_dataOut    : std_logic_vector(AXI4_Lite_Rd_RqA_WIDTH - 1 downto 0);
     signal rdrsp_dataIn     : std_logic_vector(AXI4_Lite_Rd_Rsp_WIDTH - 1 downto 0);
     signal rdrsp_dataOut    : std_logic_vector(AXI4_Lite_Rd_Rsp_WIDTH - 1 downto 0);
@@ -182,12 +182,12 @@ begin
         clk             => clk,
         rst             => rst,
 
-		WriteEn         => AXI_awvalid,     --in awvalid
-		DataIn          => wrrqa_dataIn,    --in awaddr, etc
-		ReadEn          => wrrqA_get_en,    --in external_ifc
-		DataOut         => wrrqa_dataOut,   --out external_ifc
-		"NOT"(Empty)    => wrrqA_get_valid, --out external_ifc
-        "NOT"(Full)     => AXI_awready      --out awready
+		WrValid_in      => AXI_awvalid,     --in awvalid
+        WrReady_out     => AXI_awready,      --out awready
+		WrData_in       => wrrqa_dataIn,    --in awaddr, etc
+		RdValid_out     => wrrqA_get_valid, --out external_ifc
+		RdReady_in      => wrrqA_get_en,    --in external_ifc
+		RdData_out      => wrrqa_dataOut   --out external_ifc
     );
 
     FIFO_WRRQD: STD_FIFO
@@ -199,12 +199,12 @@ begin
         clk             => clk,
         rst             => rst,
 
-		WriteEn         => AXI_wvalid,      --in awvalid
-		DataIn          => wrrqd_dataIn,    --in awaddr, etc
-		ReadEn          => wrrqD_get_en,    --in external_ifc
-		DataOut         => wrrqd_dataOut,   --out external_ifc
-		"NOT"(Empty)    => wrrqD_get_valid, --out external_ifc
-        "NOT"(Full)     => AXI_wready       --out awready
+		WrValid_in      => AXI_wvalid,      --in awvalid
+        WrReady_out     => AXI_wready,       --out awready
+		WrData_in       => wrrqd_dataIn,    --in awaddr, etc
+		RdValid_out     => wrrqD_get_valid, --out external_ifc
+		RdReady_in      => wrrqD_get_en,    --in external_ifc
+		RdData_out      => wrrqd_dataOut   --out external_ifc
     );
     
     FIFO_RDRQA: STD_FIFO
@@ -216,12 +216,12 @@ begin
         clk             => clk,
         rst             => rst,
 
-		WriteEn         => AXI_arvalid,     --in awvalid
-		DataIn          => rdrqa_dataIn,    --in awaddr, etc
-		ReadEn          => rdrqA_get_en,    --in external_ifc
-		DataOut         => rdrqa_dataIn,    --out external_ifc
-		"NOT"(Empty)    => rdrqA_get_valid, --out external_ifc
-        "NOT"(Full)     => AXI_arready      --out awready
+		WrValid_in      => AXI_arvalid,     --in awvalid
+        WrReady_out     => AXI_arready,      --out awready
+		WrData_in       => rdrqa_dataIn,    --in awaddr, etc
+		RdValid_out     => rdrqA_get_valid, --out external_ifc
+		RdReady_in      => rdrqA_get_en,    --in external_ifc
+		RdData_out      => rdrqa_dataOut    --out external_ifc
     );
 
     FIFO_RDRSP: STD_FIFO
@@ -233,12 +233,12 @@ begin
         clk             => clk,
         rst             => rst,
 
-		WriteEn         => rdrsp_put_en,    --in external_ifc
-		DataIn          => rdrsp_dataIn,    --in external_ifc
-		ReadEn          => AXI_rready,      --in rready
-		DataOut         => rdrsp_dataOut,   --out rdata, rresp, etc
-		"NOT"(Empty)    => AXI_rvalid,      --out rvalid
-        "NOT"(Full)     => rdrsp_put_ready  --out external_ifc
+		WrValid_in      => rdrsp_put_en,    --in external_ifc
+        WrReady_out     => rdrsp_put_ready,  --out external_ifc
+		WrData_in       => rdrsp_dataIn,    --in external_ifc
+		RdValid_out     => AXI_rvalid,      --out rvalid
+		RdReady_in      => AXI_rready,      --in rready
+		RdData_out      => rdrsp_dataOut   --out rdata, rresp, etc
     );
 
     FIFO_WRRSP: STD_FIFO
@@ -250,12 +250,12 @@ begin
         clk             => clk,
         rst             => rst,
 
-		WriteEn         => wrrsp_put_en,    --in external_ifc
-		DataIn          => wrrsp_dataIn,    --in external_ifc
-		ReadEn          => AXI_bready,      --in bready
-		DataOut         => wrrsp_dataOut,   --out bresp, etc
-		"NOT"(Empty)    => AXI_bvalid,      --out bvalid
-        "NOT"(Full)     => wrrsp_put_ready  --out external_ifc
+		WrValid_in      => wrrsp_put_en,    --in external_ifc
+        WrReady_out     => wrrsp_put_ready,  --out external_ifc
+		WrData_in       => wrrsp_dataIn,    --in external_ifc
+		RdValid_out     => AXI_bvalid,      --out bvalid
+		RdReady_in      => AXI_bready,      --in bready
+		RdData_out      => wrrsp_dataOut   --out bresp, etc
     );
 
 end Behavioral;

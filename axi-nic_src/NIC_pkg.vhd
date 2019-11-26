@@ -33,8 +33,8 @@ package NIC_pkg is
     -- generic packages propably not supported (would maybe be useful for Arke_pkg dimensions and helper functions depending on dims)
     constant AXI4_FULL_DATA_WIDTH   : integer := 128;
     constant AXI4_FULL_ADDR_WIDTH   : integer := 32;
-    constant AXI4_LITE_DATA_WIDTH   : integer := 64;
-    constant AXI4_LITE_ADDR_WIDTH   : integer := 32;
+    constant AXI4_LITE_DATA_WIDTH   : integer := 8;
+    constant AXI4_LITE_ADDR_WIDTH   : integer := 8;
 
 
 
@@ -157,14 +157,14 @@ package NIC_pkg is
             fifo_depth	: positive
         );
         Port ( 
-            clk		: in  std_logic;
-            rst		: in  std_logic;
-            WriteEn	: in  std_logic;
-            DataIn	: in  std_logic_vector(data_width - 1 downto 0);
-            ReadEn	: in  std_logic;
-            DataOut	: out std_logic_vector(data_width - 1 downto 0);
-            Empty	: out std_logic;
-            Full	: out std_logic
+            clk			: in  std_logic;
+            rst			: in  std_logic;
+            WrValid_in	: in  std_logic;
+            WrReady_out	: out std_logic;
+            WrData_in	: in  std_logic_vector(data_width - 1 downto 0);
+            RdReady_in	: in  std_logic;
+            RdData_out  : out std_logic_vector(data_width - 1 downto 0);
+            RdValid_out	: out std_logic 
         );
     end component;
 
