@@ -37,6 +37,12 @@ package NIC_pkg is
     constant AXI4_LITE_ADDR_WIDTH   : integer := 8;
 
 
+    type transmission_data is record
+        axi_spec : std_logic_vector ( DATA_WIDTH - 1 downto DATA_WIDTH - 1 ); -- 0 is AXI4Lite, 1 is AXI4Full
+        axi_ch   : std_logic_vector ( DATA_WIDTH - 2 downto DATA_WIDTH - 3 ); -- 00 is ar/r, 10 is aw/b, 11 is w
+        is_first : std_logic_vector ( DATA_WIDTH - 4 downto DATA_WIDTH - 4 ); -- first contains network address
+        data     : std_logic_vector ( DATA_WIDTH - 5 downto 0 );
+    end record;
 
     --------------------
     -- AXI4Full Types --
