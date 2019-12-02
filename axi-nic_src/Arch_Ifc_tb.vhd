@@ -32,11 +32,13 @@ entity Arch_Ifc_tb is
 end entity Arch_Ifc_tb;
 
 
-architecture tb1 of Arch_Ifc_tb is
+architecture tb1 of Arch_Ifc_tb is 
 
   -- component generics
   constant address : std_logic_vector := "000000";
   constant address_map : std_logic_vector := "001110010110000111110001111100111010110000001100000110000011101101101101111000101001111001101010010011000111010010001001100101000101011110111101000111111001111010";
+
+
 
   -- component ports
   signal clk              : std_logic := '1';
@@ -125,6 +127,9 @@ begin  -- architecture tb1
     controlIn       <= controlIn_value;
     wait until rising_edge(clk);
 
+    while (AXI_arready = '0') loop
+      wait until rising_edge(clk);
+    end loop;
   end procedure check_cycle;
   begin
     -- insert signal assignments here
@@ -133,10 +138,117 @@ begin  -- architecture tb1
     rst <= '0';
     wait until rising_edge(clk);
 
+    ---controlIn <= "100" after 100 ns;
+    
     check_cycle (
       AXI_arvalid_value => '1',
       AXI_rdrqA_data_value => (
         addr => std_logic_vector(to_unsigned(25, 8)),
+        prot => "000"
+      ),
+      AXI_awvalid_value => '0',
+      AXI_wrrqA_data_value => (
+        addr => "00000000",
+        prot => "000"
+      ),
+      AXI_wvalid_value => '0',
+      AXI_wrrqD_data_value => (
+        data => "00000000",
+        strb => "0000"
+      ),
+      AXI_rready_value => '1',
+      AXI_bready_value => '1',
+      dataIn_value  => (others => '1'),
+      controlIn_value => "011"
+    );
+    check_cycle (
+      AXI_arvalid_value => '1',
+      AXI_rdrqA_data_value => (
+        addr => std_logic_vector(to_unsigned(20, 8)),
+        prot => "000"
+      ),
+      AXI_awvalid_value => '0',
+      AXI_wrrqA_data_value => (
+        addr => "00000000",
+        prot => "000"
+      ),
+      AXI_wvalid_value => '0',
+      AXI_wrrqD_data_value => (
+        data => "00000000",
+        strb => "0000"
+      ),
+      AXI_rready_value => '1',
+      AXI_bready_value => '1',
+      dataIn_value  => (others => '0'),
+      controlIn_value => "011"
+    );
+    check_cycle (
+      AXI_arvalid_value => '1',
+      AXI_rdrqA_data_value => (
+        addr => std_logic_vector(to_unsigned(1, 8)),
+        prot => "000"
+      ),
+      AXI_awvalid_value => '0',
+      AXI_wrrqA_data_value => (
+        addr => "00000000",
+        prot => "000"
+      ),
+      AXI_wvalid_value => '0',
+      AXI_wrrqD_data_value => (
+        data => "00000000",
+        strb => "0000"
+      ),
+      AXI_rready_value => '1',
+      AXI_bready_value => '1',
+      dataIn_value  => (others => '0'),
+      controlIn_value => "000"
+    );
+    check_cycle (
+      AXI_arvalid_value => '1',
+      AXI_rdrqA_data_value => (
+        addr => std_logic_vector(to_unsigned(10, 8)),
+        prot => "000"
+      ),
+      AXI_awvalid_value => '0',
+      AXI_wrrqA_data_value => (
+        addr => "00000000",
+        prot => "000"
+      ),
+      AXI_wvalid_value => '0',
+      AXI_wrrqD_data_value => (
+        data => "00000000",
+        strb => "0000"
+      ),
+      AXI_rready_value => '1',
+      AXI_bready_value => '1',
+      dataIn_value  => (others => '0'),
+      controlIn_value => "000"
+    );
+    check_cycle (
+      AXI_arvalid_value => '1',
+      AXI_rdrqA_data_value => (
+        addr => std_logic_vector(to_unsigned(5, 8)),
+        prot => "111"
+      ),
+      AXI_awvalid_value => '0',
+      AXI_wrrqA_data_value => (
+        addr => "00000000",
+        prot => "000"
+      ),
+      AXI_wvalid_value => '0',
+      AXI_wrrqD_data_value => (
+        data => "00000000",
+        strb => "0000"
+      ),
+      AXI_rready_value => '0',
+      AXI_bready_value => '0',
+      dataIn_value  => (others => '0'),
+      controlIn_value => "100"
+    );
+    check_cycle (
+      AXI_arvalid_value => '1',
+      AXI_rdrqA_data_value => (
+        addr => std_logic_vector(to_unsigned(15, 8)),
         prot => "000"
       ),
       AXI_awvalid_value => '0',
@@ -154,19 +266,12 @@ begin  -- architecture tb1
       dataIn_value  => (others => '0'),
       controlIn_value => "100"
     );
-    AXI_arvalid <= '0';
-    if(AXI_arready = '1') then
-      AXI_arvalid <= '0';
-    end if;
-    wait until rising_edge(clk);
-    if(AXI_arready = '1') then
-      AXI_arvalid <= '0';
-    end if;
-    wait until rising_edge(clk);
+    --if(AXI_arready = '1') then
+    --  AXI_arvalid <= '0';
+    --end if;
+    --wait until rising_edge(clk);
     wait for 100 ns * 10;
   end process WaveGen_Proc;
-
-  
 
 end architecture tb1;
 
