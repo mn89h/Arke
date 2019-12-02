@@ -1,8 +1,8 @@
 -------------------------------------------------------------------------------
--- Title      : AXI4_Full_Slave
+-- Title      : AXI4_Lite_Master
 -- Project    : TaPaSCo
 -------------------------------------------------------------------------------
--- File       : AXI4_Full_Slave.vhd
+-- File       : AXI4_Lite_Master.vhd
 -- Author     : Malte Nilges
 -- Standard   : VHDL-2008
 -------------------------------------------------------------------------------
@@ -31,7 +31,7 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use work.NIC_pkg.all;
 
-entity AXI4_Full_Slave is
+entity AXI4_Lite_Master is
   port (
     ------------------------
     -- Incoming system clock
@@ -102,159 +102,159 @@ entity AXI4_Full_Slave is
     -- System interface
     -- Connect to a Master Interface
     ---------------------------------
-    AXI_arvalid     : in  std_logic;
-    AXI_arready     : out std_logic;
-    AXI_rdrqA_data  : in  AXI4_Full_Rd_RqA;
+    AXI_arvalid     : out std_logic;
+    AXI_arready     : in  std_logic;
+    AXI_rdrqA_data  : out AXI4_Lite_Rd_RqA;
 
-    AXI_awvalid     : in  std_logic;
-    AXI_awready     : out std_logic;
-    AXI_wrrqA_data  : in  AXI4_Full_Wr_RqA;
+    AXI_awvalid     : out std_logic;
+    AXI_awready     : in  std_logic;
+    AXI_wrrqA_data  : out AXI4_Lite_Wr_RqA;
 
-    AXI_wvalid      : in  std_logic;
-    AXI_wready      : out std_logic;
-    AXI_wrrqD_data  : in  AXI4_Full_Wr_RqD;
+    AXI_wvalid      : out std_logic;
+    AXI_wready      : in  std_logic;
+    AXI_wrrqD_data  : out AXI4_Lite_Wr_RqD;
 
-    AXI_rready      : in  std_logic;
-    AXI_rvalid      : out std_logic;
-    AXI_rdrsp_data  : out AXI4_Full_Rd_Rsp;
+    AXI_rready      : out std_logic;
+    AXI_rvalid      : in  std_logic;
+    AXI_rdrsp_data  : in  AXI4_Lite_Rd_Rsp;
 
-    AXI_bready      : in  std_logic;
-    AXI_bvalid      : out std_logic;
-    AXI_wrrsp_data  : out AXI4_Full_Wr_Rsp;
+    AXI_bready      : out std_logic;
+    AXI_bvalid      : in  std_logic;
+    AXI_wrrsp_data  : in  AXI4_Lite_Wr_Rsp;
 
     ---------------------------------
     -- User interface
     -- Access GET Ifc: Enable the get request and validate the received data
     -- Access PUT Ifc: Check the ready signal and enable the data transfer
     ---------------------------------
-    rdrqA_get_valid : out std_logic;
-    rdrqA_get_en    : in  std_logic;
-    rdrqA_get_data  : out AXI4_Full_Rd_RqA; -- := ((others => '0'), (others => '0')); instantly overwritten
+    rdrqA_put_en    : in  std_logic;
+    rdrqA_put_ready : out std_logic;
+    rdrqA_put_data  : in  AXI4_Lite_Rd_RqA;
 
-    wrrqA_get_valid : out std_logic;
-    wrrqA_get_en    : in  std_logic;
-    wrrqA_get_data  : out AXI4_Full_Wr_RqA;
+    wrrqA_put_en    : in  std_logic;
+    wrrqA_put_ready : out std_logic;
+    wrrqA_put_data  : in  AXI4_Lite_Wr_RqA;
 
-    wrrqD_get_valid : out std_logic;
-    wrrqD_get_en    : in  std_logic;
-    wrrqD_get_data  : out AXI4_Full_Wr_RqD;
+    wrrqD_put_en    : in  std_logic;
+    wrrqD_put_ready : out std_logic;
+    wrrqD_put_data  : in  AXI4_Lite_Wr_RqD;
 
-    rdrsp_put_en    : in  std_logic;
-    rdrsp_put_ready : out std_logic;
-    rdrsp_put_data  : in  AXI4_Full_Rd_Rsp;
+    rdrsp_get_valid : out std_logic;
+    rdrsp_get_en    : in  std_logic;
+    rdrsp_get_data  : out AXI4_Lite_Rd_Rsp; -- := ((others => '0'), (others => '0')); instantly overwritten
 
-    wrrsp_put_en    : in  std_logic;
-    wrrsp_put_ready : out std_logic;
-    wrrsp_put_data  : in  AXI4_Full_Wr_Rsp
+    wrrsp_get_valid : out std_logic;
+    wrrsp_get_en    : in  std_logic;
+    wrrsp_get_data  : out AXI4_Lite_Wr_Rsp
     );
-end AXI4_Full_Slave;
+end AXI4_Lite_Master;
 
-architecture Behavioral of AXI4_Full_Slave is
-    signal wrrqa_dataIn     : std_logic_vector(AXI4_Full_Wr_RqA_WIDTH - 1 downto 0);
-    signal wrrqa_dataOut    : std_logic_vector(AXI4_Full_Wr_RqA_WIDTH - 1 downto 0);
-    signal wrrqd_dataIn     : std_logic_vector(AXI4_Full_Wr_RqD_WIDTH - 1 downto 0);
-    signal wrrqd_dataOut    : std_logic_vector(AXI4_Full_Wr_RqD_WIDTH - 1 downto 0);
-    signal rdrqa_dataIn     : std_logic_vector(AXI4_Full_Rd_RqA_WIDTH - 1 downto 0);
-    signal rdrqa_dataOut    : std_logic_vector(AXI4_Full_Rd_RqA_WIDTH - 1 downto 0);
-    signal rdrsp_dataIn     : std_logic_vector(AXI4_Full_Rd_Rsp_WIDTH - 1 downto 0);
-    signal rdrsp_dataOut    : std_logic_vector(AXI4_Full_Rd_Rsp_WIDTH - 1 downto 0);
-    signal wrrsp_dataIn     : std_logic_vector(AXI4_Full_Wr_Rsp_WIDTH - 1 downto 0);
-    signal wrrsp_dataOut    : std_logic_vector(AXI4_Full_Wr_Rsp_WIDTH - 1 downto 0);
+architecture Behavioral of AXI4_Lite_Master is
+    signal wrrqa_dataIn     : std_logic_vector(AXI4_Lite_Wr_RqA_WIDTH - 1 downto 0);
+    signal wrrqa_dataOut    : std_logic_vector(AXI4_Lite_Wr_RqA_WIDTH - 1 downto 0);
+    signal wrrqd_dataIn     : std_logic_vector(AXI4_Lite_Wr_RqD_WIDTH - 1 downto 0);
+    signal wrrqd_dataOut    : std_logic_vector(AXI4_Lite_Wr_RqD_WIDTH - 1 downto 0);
+    signal rdrqa_dataIn     : std_logic_vector(AXI4_Lite_Rd_RqA_WIDTH - 1 downto 0);
+    signal rdrqa_dataOut    : std_logic_vector(AXI4_Lite_Rd_RqA_WIDTH - 1 downto 0);
+    signal rdrsp_dataIn     : std_logic_vector(AXI4_Lite_Rd_Rsp_WIDTH - 1 downto 0);
+    signal rdrsp_dataOut    : std_logic_vector(AXI4_Lite_Rd_Rsp_WIDTH - 1 downto 0);
+    signal wrrsp_dataIn     : std_logic_vector(AXI4_Lite_Wr_Rsp_WIDTH - 1 downto 0);
+    signal wrrsp_dataOut    : std_logic_vector(AXI4_Lite_Wr_Rsp_WIDTH - 1 downto 0);
 begin
     
-    wrrqa_dataIn    <= serialize_A4F_Wr_RqA(AXI_wrrqA_data);
-    wrrqd_dataIn    <= serialize_A4F_Wr_RqD(AXI_wrrqD_data);
-    rdrqa_dataIn    <= serialize_A4F_Rd_RqA(AXI_rdrqA_data);
-    rdrsp_dataIn    <= serialize_A4F_Rd_Rsp(rdrsp_put_data);
-    wrrsp_dataIn    <= serialize_A4F_Wr_Rsp(wrrsp_put_data);
-    wrrqA_get_data  <= deserialize_A4F_Wr_RqA(wrrqa_dataOut);
-    wrrqD_get_data  <= deserialize_A4F_Wr_RqD(wrrqd_dataOut);
-    rdrqA_get_data  <= deserialize_A4F_Rd_RqA(rdrqa_dataOut);
-    AXI_rdrsp_data  <= deserialize_A4F_Rd_Rsp(rdrsp_dataOut);
-    AXI_wrrsp_data  <= deserialize_A4F_Wr_Rsp(wrrsp_dataOut);
+    wrrqa_dataIn    <= serialize_A4L_Wr_RqA(wrrqA_put_data);
+    wrrqd_dataIn    <= serialize_A4L_Wr_RqD(wrrqD_put_data);
+    rdrqa_dataIn    <= serialize_A4L_Rd_RqA(rdrqA_put_data);
+    rdrsp_dataIn    <= serialize_A4L_Rd_Rsp(AXI_rdrsp_data);
+    wrrsp_dataIn    <= serialize_A4L_Wr_Rsp(AXI_wrrsp_data);
+    AXI_wrrqA_data  <= deserialize_A4L_Wr_RqA(wrrqa_dataOut);
+    AXI_wrrqD_data  <= deserialize_A4L_Wr_RqD(wrrqd_dataOut);
+    AXI_rdrqA_data  <= deserialize_A4L_Rd_RqA(rdrqa_dataOut);
+    rdrsp_get_data  <= deserialize_A4L_Rd_Rsp(rdrsp_dataOut);
+    wrrsp_get_data  <= deserialize_A4L_Wr_Rsp(wrrsp_dataOut);
 
     FIFO_WRRQA: STD_FIFO
     generic map(
-        data_width      => AXI4_Full_Wr_RqA_WIDTH,
+        data_width      => AXI4_Lite_Wr_RqA_WIDTH,
         fifo_depth      => 2
     )
     port map(
         clk             => clk,
         rst             => rst,
 
-		WrValid_in      => AXI_awvalid,
-        WrReady_out     => AXI_awready,
+		WrValid_in      => wrrqA_put_en,
+        WrReady_out     => wrrqA_put_ready,
 		WrData_in       => wrrqa_dataIn,
-		RdValid_out     => wrrqA_get_valid,
-		RdReady_in      => wrrqA_get_en,
+		RdValid_out     => AXI_awvalid,
+		RdReady_in      => AXI_awready,
 		RdData_out      => wrrqa_dataOut
     );
 
     FIFO_WRRQD: STD_FIFO
     generic map(
-        data_width      => AXI4_Full_Wr_RqD_WIDTH,
+        data_width      => AXI4_Lite_Wr_RqD_WIDTH,
         fifo_depth      => 2
     )
     port map(
         clk             => clk,
         rst             => rst,
 
-		WrValid_in      => AXI_wvalid,
-        WrReady_out     => AXI_wready,
+		WrValid_in      => wrrqD_put_en,
+        WrReady_out     => wrrqD_put_ready,
 		WrData_in       => wrrqd_dataIn,
-		RdValid_out     => wrrqD_get_valid,
-		RdReady_in      => wrrqD_get_en,
+		RdValid_out     => AXI_wvalid,
+		RdReady_in      => AXI_wready,
 		RdData_out      => wrrqd_dataOut
     );
     
     FIFO_RDRQA: STD_FIFO
     generic map(
-        data_width      => AXI4_Full_Rd_RqA_WIDTH,
+        data_width      => AXI4_Lite_Rd_RqA_WIDTH,
         fifo_depth      => 2
     )
     port map(
         clk             => clk,
         rst             => rst,
 
-		WrValid_in      => AXI_arvalid,
-        WrReady_out     => AXI_arready,
+        WrValid_in      => rdrqA_put_en,
+        WrReady_out     => rdrqA_put_ready,
 		WrData_in       => rdrqa_dataIn,
-		RdValid_out     => rdrqA_get_valid,
-		RdReady_in      => rdrqA_get_en,
+		RdValid_out     => AXI_arvalid,
+		RdReady_in      => AXI_arready,
 		RdData_out      => rdrqa_dataOut
     );
 
     FIFO_RDRSP: STD_FIFO
     generic map(
-        data_width      => AXI4_Full_Rd_Rsp_WIDTH,
+        data_width      => AXI4_Lite_Rd_Rsp_WIDTH,
         fifo_depth      => 2
     )
     port map(
         clk             => clk,
         rst             => rst,
 
-		WrValid_in      => rdrsp_put_en,
-        WrReady_out     => rdrsp_put_ready,
+		WrValid_in      => AXI_rvalid,
+        WrReady_out     => AXI_rready,
 		WrData_in       => rdrsp_dataIn,
-		RdValid_out     => AXI_rvalid,
-		RdReady_in      => AXI_rready,
+		RdValid_out     => rdrsp_get_valid,
+		RdReady_in      => rdrsp_get_en,
 		RdData_out      => rdrsp_dataOut
     );
 
     FIFO_WRRSP: STD_FIFO
     generic map(
-        data_width      => AXI4_Full_Wr_Rsp_WIDTH,
+        data_width      => AXI4_Lite_Wr_Rsp_WIDTH,
         fifo_depth      => 2
     )
     port map(
         clk             => clk,
         rst             => rst,
 
-		WrValid_in      => wrrsp_put_en,
-        WrReady_out     => wrrsp_put_ready,
+		WrValid_in      => AXI_bvalid,
+        WrReady_out     => AXI_bready,
 		WrData_in       => wrrsp_dataIn,
-		RdValid_out     => AXI_bvalid,
-		RdReady_in      => AXI_bready,
+		RdValid_out     => rdrsp_get_valid,
+		RdReady_in      => rdrsp_get_en,
 		RdData_out      => wrrsp_dataOut
     );
 

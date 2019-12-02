@@ -154,7 +154,7 @@ architecture Behavioral of AXI4_Lite_Slave is
     signal wrrqa_dataOut    : std_logic_vector(AXI4_Lite_Wr_RqA_WIDTH - 1 downto 0);
     signal wrrqd_dataIn     : std_logic_vector(AXI4_Lite_Wr_RqD_WIDTH - 1 downto 0);
     signal wrrqd_dataOut    : std_logic_vector(AXI4_Lite_Wr_RqD_WIDTH - 1 downto 0);
-    signal rdrqa_dataIn     : std_logic_vector(AXI4_Lite_Rd_RqA_WIDTH - 1 downto 0);-- := (others => '0');
+    signal rdrqa_dataIn     : std_logic_vector(AXI4_Lite_Rd_RqA_WIDTH - 1 downto 0);
     signal rdrqa_dataOut    : std_logic_vector(AXI4_Lite_Rd_RqA_WIDTH - 1 downto 0);
     signal rdrsp_dataIn     : std_logic_vector(AXI4_Lite_Rd_Rsp_WIDTH - 1 downto 0);
     signal rdrsp_dataOut    : std_logic_vector(AXI4_Lite_Rd_Rsp_WIDTH - 1 downto 0);
@@ -182,12 +182,12 @@ begin
         clk             => clk,
         rst             => rst,
 
-		WrValid_in      => AXI_awvalid,     --in awvalid
-        WrReady_out     => AXI_awready,      --out awready
-		WrData_in       => wrrqa_dataIn,    --in awaddr, etc
-		RdValid_out     => wrrqA_get_valid, --out external_ifc
-		RdReady_in      => wrrqA_get_en,    --in external_ifc
-		RdData_out      => wrrqa_dataOut   --out external_ifc
+		WrValid_in      => AXI_awvalid,
+        WrReady_out     => AXI_awready,
+		WrData_in       => wrrqa_dataIn,
+		RdValid_out     => wrrqA_get_valid,
+		RdReady_in      => wrrqA_get_en,
+		RdData_out      => wrrqa_dataOut
     );
 
     FIFO_WRRQD: STD_FIFO
@@ -199,12 +199,12 @@ begin
         clk             => clk,
         rst             => rst,
 
-		WrValid_in      => AXI_wvalid,      --in awvalid
-        WrReady_out     => AXI_wready,       --out awready
-		WrData_in       => wrrqd_dataIn,    --in awaddr, etc
-		RdValid_out     => wrrqD_get_valid, --out external_ifc
-		RdReady_in      => wrrqD_get_en,    --in external_ifc
-		RdData_out      => wrrqd_dataOut   --out external_ifc
+		WrValid_in      => AXI_wvalid,
+        WrReady_out     => AXI_wready,
+		WrData_in       => wrrqd_dataIn,
+		RdValid_out     => wrrqD_get_valid,
+		RdReady_in      => wrrqD_get_en,
+		RdData_out      => wrrqd_dataOut
     );
     
     FIFO_RDRQA: STD_FIFO
@@ -216,12 +216,12 @@ begin
         clk             => clk,
         rst             => rst,
 
-		WrValid_in      => AXI_arvalid,     --in awvalid
-        WrReady_out     => AXI_arready,      --out awready
-		WrData_in       => rdrqa_dataIn,    --in awaddr, etc
-		RdValid_out     => rdrqA_get_valid, --out external_ifc
-		RdReady_in      => rdrqA_get_en,    --in external_ifc
-		RdData_out      => rdrqa_dataOut    --out external_ifc
+		WrValid_in      => AXI_arvalid,
+        WrReady_out     => AXI_arready,
+		WrData_in       => rdrqa_dataIn,
+		RdValid_out     => rdrqA_get_valid,
+		RdReady_in      => rdrqA_get_en,
+		RdData_out      => rdrqa_dataOut
     );
 
     FIFO_RDRSP: STD_FIFO
@@ -233,12 +233,12 @@ begin
         clk             => clk,
         rst             => rst,
 
-		WrValid_in      => rdrsp_put_en,    --in external_ifc
-        WrReady_out     => rdrsp_put_ready,  --out external_ifc
-		WrData_in       => rdrsp_dataIn,    --in external_ifc
-		RdValid_out     => AXI_rvalid,      --out rvalid
-		RdReady_in      => AXI_rready,      --in rready
-		RdData_out      => rdrsp_dataOut   --out rdata, rresp, etc
+		WrValid_in      => rdrsp_put_en,
+        WrReady_out     => rdrsp_put_ready,
+		WrData_in       => rdrsp_dataIn,
+		RdValid_out     => AXI_rvalid,
+		RdReady_in      => AXI_rready,
+		RdData_out      => rdrsp_dataOut
     );
 
     FIFO_WRRSP: STD_FIFO
@@ -250,12 +250,12 @@ begin
         clk             => clk,
         rst             => rst,
 
-		WrValid_in      => wrrsp_put_en,    --in external_ifc
-        WrReady_out     => wrrsp_put_ready,  --out external_ifc
-		WrData_in       => wrrsp_dataIn,    --in external_ifc
-		RdValid_out     => AXI_bvalid,      --out bvalid
-		RdReady_in      => AXI_bready,      --in bready
-		RdData_out      => wrrsp_dataOut   --out bresp, etc
+		WrValid_in      => wrrsp_put_en,
+        WrReady_out     => wrrsp_put_ready,
+		WrData_in       => wrrsp_dataIn,
+		RdValid_out     => AXI_bvalid,
+		RdReady_in      => AXI_bready,
+		RdData_out      => wrrsp_dataOut
     );
 
 end Behavioral;
