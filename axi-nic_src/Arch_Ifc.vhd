@@ -1,3 +1,24 @@
+-------------------------------------------------------------------------------
+-- Title      : Architecture Interface
+-- Project    : TaPaSCo NoC Integration
+-------------------------------------------------------------------------------
+-- File       : Arch_Ifc.vhd
+-- Author     : Malte Nilges
+-- Company    : 
+-- Created    : 2019-11-24
+-- Last update: 2019-12-09
+-- Platform   : 
+-- Standard   : VHDL'93/02
+-------------------------------------------------------------------------------
+-- Description: Network interface for TaPaSCo's architecture sending data to 
+--              and receiving data from PEs (processing elements).
+--              Data received from AXI4 Lite Master is being received by a
+--              Slave and converted to appropriate network data format and the 
+--              other way round.
+-------------------------------------------------------------------------------
+-- Copyright (c) 2019 
+-------------------------------------------------------------------------------
+
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -44,7 +65,7 @@ architecture Behavioral of Arch_Ifc is
     constant ADDR_W     : integer := DIM_X_W + DIM_Y_W + DIM_Z_W;
 
     type ADDR_MAP_TYPE is array (0 to DIM_X * DIM_Y * DIM_Z - 1) of std_logic_vector(ADDR_W - 1 downto 0);
-
+    type State is (RdRqA, WrRqA, WrRqD);
 
     signal rdrqA_get_valid : std_logic;
     signal rdrqA_get_en    : std_logic;
@@ -63,8 +84,7 @@ architecture Behavioral of Arch_Ifc is
     signal wrrsp_put_data  : AXI4_Lite_Wr_Rsp;
 
     signal rsp_put_stalled : std_logic;
-
-    --constant address_map_c : ADDR_MAP_TYPE := (others => (others => '0'));
+    signal state_send      : State;
 
     function to_ADDR_MAP_TYPE (
         slv : std_logic_vector
@@ -133,73 +153,142 @@ architecture Behavioral of Arch_Ifc is
             variable address        : std_logic_vector(ADDR_W - 1 downto 0);
         begin if rising_edge(clk) then
             if (rst = '1') then
-                controlOut <= "100";
-                dataOut <= (others => '0');
+                controlOut          <= "100";
+                dataOut             <= (others => '0');
+                state_send          <= RdRqA;
+                rsp_put_stalled     <= '0';
             else
-                if(controlIn(STALL_GO) = '1') then
-                    wrrqA_get_en <= '1';
-                    wrrqD_get_en <= '1';
-                    rdrqA_get_en <= '1';
-                            
-                    if(wrrqA_get_valid = '1') then
-                        wrrqA_get_data_tmp  := wrrqA_get_data;
-                        vec_wrrqa           := serialize_A4L_Wr_RqA(wrrqA_get_data_tmp);
-                        address             := address_map_c(to_Integer(unsigned(rdrqA_get_data_tmp.addr)) + 1);
-                        dataOut             <= '0' & "10" & ZERO(dataOut'left - 3 downto vec_wrrqa'length + ADDR_W) & vec_wrrqa & address;
-                        controlOut(TX)      <= '1';
-                        controlOut(EOP)     <= '0';
-                    elsif(wrrqD_get_valid = '1') then
-                        wrrqD_get_data_tmp  := wrrqD_get_data;
-                        vec_wrrqd           := serialize_A4L_Wr_RqD(wrrqD_get_data_tmp);
-                        dataOut             <= '0' & "11" & ZERO(dataOut'left - 3 downto vec_wrrqd'length) & vec_wrrqd;
-                        controlOut(TX)      <= '1';
-                        controlOut(EOP)     <= '1';
-                    elsif(rdrqA_get_valid = '1') then
+            -------------------------------------
+            -- A4L R/W REQUEST TO NETWORK DATA --
+            -------------------------------------
+            -- Incoming r/w requests are being handed over to the network as they are valid using round-robin.
+            -- If a request is valid, but the local router isn't able to receive data, the state remains the same
+            -- otherwise it changes to the next state to look for valid data.
+            -- The network destination is chosen by a address map in conjunction with the AXI address.
+
+            -- STATE 1: RDRQA
+            if (state_send = RdRqA) then
+                wrrqA_get_en        <= '0';
+                wrrqD_get_en        <= '0';
+
+                if (rdrqA_get_valid = '1') then
+                    if (controlIn(STALL_GO) = '1') then
                         rdrqA_get_data_tmp  := rdrqA_get_data;
                         vec_rdrqa           := serialize_A4L_Rd_RqA(rdrqA_get_data_tmp);
                         address             := address_map_c(to_Integer(unsigned(rdrqA_get_data_tmp.addr)) + 1);
                         dataOut             <= '0' & "00" & ZERO(dataOut'left - 3 downto vec_rdrqa'length + ADDR_W) & vec_rdrqa & address;
                         controlOut(TX)      <= '1';
                         controlOut(EOP)     <= '1';
+
+                        rdrqA_get_en        <= '1';
+                        state_send          <= WrRqA;
                     else
+                        rdrqA_get_en        <= '0';
+                    end if;
+                else
+                    if (controlIn(STALL_GO) = '1') then
                         controlOut(TX)      <= '0';
                         controlOut(EOP)     <= '0';
                     end if;
-                else
-                    controlOut(TX)      <= '0';
-                    controlOut(EOP)     <= '0';
+
+                    rdrqA_get_en        <= '0';
+                    state_send          <= WrRqA;
                 end if;
 
-                --TODO: seperate rd/wr channels further by making STALL_GO dependant from channel?
-                
-                if ((controlIn(RX) = '1') or (rsp_put_stalled = '1')) then
-                    if (dataIn(dataIn'left - 1) = '1') then
+            -- STATE 2: WRRQA
+            elsif (state_send = WrRqA) then
+                rdrqA_get_en        <= '0';
+                wrrqD_get_en        <= '0';
+
+                if (wrrqA_get_valid = '1') then
+                    if (controlIn(STALL_GO) = '1') then
+                        wrrqA_get_data_tmp  := wrrqA_get_data;
+                        vec_wrrqa           := serialize_A4L_Wr_RqA(wrrqA_get_data_tmp);
+                        address             := address_map_c(to_Integer(unsigned(rdrqA_get_data_tmp.addr)) + 1);
+                        dataOut             <= '0' & "10" & ZERO(dataOut'left - 3 downto vec_wrrqa'length + ADDR_W) & vec_wrrqa & address;
+                        controlOut(TX)      <= '1';
+                        controlOut(EOP)     <= '0';
+
+                        wrrqA_get_en        <= '1';
+                        state_send          <= WrRqD;
+                    else
+                        wrrqA_get_en        <= '0';
+                    end if;
+                else
+                    if (controlIn(STALL_GO) = '1') then
+                        controlOut(TX)      <= '0';
+                        controlOut(EOP)     <= '0';
+                    end if;
+
+                    wrrqA_get_en        <= '0';
+                    state_send          <= RdRqA; --if no valid wr address continue with rd
+                end if;
+
+            -- STATE 3: WRRQD
+            else
+                rdrqA_get_en        <= '0';
+                wrrqA_get_en        <= '0';
+
+                if (wrrqD_get_valid = '1') then
+                    if (controlIn(STALL_GO) = '1') then
+                        wrrqA_get_data_tmp  := wrrqA_get_data;
+                        vec_wrrqa           := serialize_A4L_Wr_RqA(wrrqA_get_data_tmp);
+                        address             := address_map_c(to_Integer(unsigned(rdrqA_get_data_tmp.addr)) + 1);
+                        dataOut             <= '0' & "10" & ZERO(dataOut'left - 3 downto vec_wrrqa'length + ADDR_W) & vec_wrrqa & address;
+                        controlOut(TX)      <= '1';
+                        controlOut(EOP)     <= '0';
+
+                        wrrqD_get_en        <= '1';
+                        state_send          <= RdRqA;
+                    else
+                        wrrqD_get_en        <= '0';
+                    end if;
+                else
+                    if (controlIn(STALL_GO) = '1') then
+                        controlOut(TX)      <= '0';
+                        controlOut(EOP)     <= '0';
+                    end if;
+
+                    wrrqD_get_en        <= '0';
+                    --if not valid remain until valid to complete the packet
+                end if;
+            end if;
+            
+
+            --------------------------------------
+            -- NETWORK DATA TO A4L R/W RESPONSE --
+            --------------------------------------
+            -- If the network sends data or data transfer is stalled because of the receiver not being ready
+            -- attempts are made to hand the data to the receiver until it is ready
+            
+            if ((controlIn(RX) = '1') or (rsp_put_stalled = '1')) then
+                if (dataIn(dataIn'left - 1) = '1') then
+                    if(wrrsp_put_ready = '1') then
                         wrrsp_put_en            <= '1';
                         wrrsp_put_data_tmp      := deserialize_A4L_Wr_Rsp(dataIn(ADDR_W + AXI4_Lite_Wr_Rsp_WIDTH - 1 downto ADDR_W));
                         wrrsp_put_data          <= wrrsp_put_data_tmp;
-                        if(wrrsp_put_ready = '1') then
-                            controlOut(STALL_GO)    <= '1';
-                            rsp_put_stalled         <= '0';
-                        else
-                            controlOut(STALL_GO)    <= '0';
-                            rsp_put_stalled         <= '1';
-                        end if;
-                    elsif (dataIn(dataIn'left - 1) = '0') then
+                        controlOut(STALL_GO)    <= '1';
+                        rsp_put_stalled         <= '0';
+                    else
+                        controlOut(STALL_GO)    <= '0';
+                        rsp_put_stalled         <= '1';
+                    end if;
+                elsif (dataIn(dataIn'left - 1) = '0') then
+                    if (rdrsp_put_ready = '1') then
                         rdrsp_put_en            <= '1';
                         rdrsp_put_data_tmp      := deserialize_A4L_Rd_Rsp(dataIn(ADDR_W + AXI4_Lite_Rd_Rsp_WIDTH - 1 downto ADDR_W));
                         rdrsp_put_data          <= rdrsp_put_data_tmp;
-                        if (rdrsp_put_ready = '1') then
-                            controlOut(STALL_GO)    <= '1';
-                            rsp_put_stalled         <= '0';
-                        else
-                            controlOut(STALL_GO)    <= '0';
-                            rsp_put_stalled         <= '1';
-                        end if;
+                        controlOut(STALL_GO)    <= '1';
+                        rsp_put_stalled         <= '0';
+                    else
+                        controlOut(STALL_GO)    <= '0';
+                        rsp_put_stalled         <= '1';
                     end if;
-                elsif (rsp_put_stalled = '0') then
-                    controlOut(STALL_GO)    <= '1';
-                    rsp_put_stalled                 <= '0';
                 end if;
+            elsif (rsp_put_stalled = '0') then
+                controlOut(STALL_GO)            <= '1';
+                rsp_put_stalled                 <= '0';
+            end if;
             end if;
         end if;
     end process;
