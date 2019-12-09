@@ -2,7 +2,7 @@
 -- Title      : FIFO for usage in AXI modules
 -- Project    : TaPaSCo NoC Integration
 -------------------------------------------------------------------------------
--- File       : STD_FIFO_tb.vhd
+-- File       : STD_FIFO.vhd
 -- Author     : Malte Nilges
 -- Company    : 
 -- Created    : 2019-11-19

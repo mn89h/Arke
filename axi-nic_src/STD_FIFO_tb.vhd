@@ -8,7 +8,7 @@
 -- Created    : 2019-11-19
 -- Last update: 2019-12-09
 -- Platform   : 
--- Standard   : VHDL'93/02
+-- Standard   : VHDL'08
 -------------------------------------------------------------------------------
 -- Description: Testbench for STD_FIFO w/ alternating and concurrent r/w access
 -------------------------------------------------------------------------------
