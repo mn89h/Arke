@@ -348,6 +348,53 @@ package NIC_pkg is
         );
     end component;
 
+    component AXI4_Lite_Master is
+        Port (
+            clk         : in std_logic;
+            rst         : in std_logic; 
+
+            AXI_arvalid     : out std_logic;
+            AXI_arready     : in  std_logic;
+            AXI_rdrqA_data  : out AXI4_Lite_Rd_RqA;
+
+            AXI_awvalid     : out std_logic;
+            AXI_awready     : in  std_logic;
+            AXI_wrrqA_data  : out AXI4_Lite_Wr_RqA;
+
+            AXI_wvalid      : out std_logic;
+            AXI_wready      : in  std_logic;
+            AXI_wrrqD_data  : out AXI4_Lite_Wr_RqD;
+
+            AXI_rready      : out std_logic;
+            AXI_rvalid      : in  std_logic;
+            AXI_rdrsp_data  : in  AXI4_Lite_Rd_Rsp;
+
+            AXI_bready      : out std_logic;
+            AXI_bvalid      : in  std_logic;
+            AXI_wrrsp_data  : in  AXI4_Lite_Wr_Rsp;
+
+            rdrqA_put_en    : in  std_logic;
+            rdrqA_put_ready : out std_logic;
+            rdrqA_put_data  : in  AXI4_Lite_Rd_RqA;
+
+            wrrqA_put_en    : in  std_logic;
+            wrrqA_put_ready : out std_logic;
+            wrrqA_put_data  : in  AXI4_Lite_Wr_RqA;
+
+            wrrqD_put_en    : in  std_logic;
+            wrrqD_put_ready : out std_logic;
+            wrrqD_put_data  : in  AXI4_Lite_Wr_RqD;
+
+            rdrsp_get_valid : out std_logic;
+            rdrsp_get_en    : in  std_logic;
+            rdrsp_get_data  : out AXI4_Lite_Rd_Rsp;
+
+            wrrsp_get_valid : out std_logic;
+            wrrsp_get_en    : in  std_logic;
+            wrrsp_get_data  : out AXI4_Lite_Wr_Rsp
+        );
+    end component;
+
 end package NIC_pkg;
 
 package body NIC_pkg is
