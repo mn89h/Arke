@@ -35,6 +35,21 @@ entity AXI4_Full_Master is
     -- Connect to a Master Interface
     ---------------------------------
     ------------------------
+    -- Read address channel
+    ------------------------
+    AXI_arready : in  std_logic;
+    AXI_arvalid : out std_logic;
+    AXI_araddr  : out std_logic_vector;
+    AXI_arid    : out std_logic_vector( 31 downto 20 );
+    AXI_arlen   : out std_logic_vector( 19 downto 16 );
+    AXI_arsize  : out std_logic_vector( 15 downto 13 );
+    AXI_arburst : out std_logic_vector( 12 downto 11 );
+    AXI_arlock  : out std_logic_vector( 10 downto 9 );
+    AXI_arcache : out std_logic_vector(  8 downto 6 );
+    AXI_arprot  : out std_logic_vector(  5 downto 3 );
+    AXI_arqos   : out std_logic_vector(  2 downto 0 );
+
+    ------------------------
     -- Write address channel    
     ------------------------
     AXI_awready : in  std_logic;
@@ -58,21 +73,6 @@ entity AXI4_Full_Master is
     AXI_wid     : out std_logic_vector( 16 downto 5 );
     AXI_wstrb   : out std_logic_vector(  4 downto 1 );
     AXI_wlast   : out std_logic_vector(  0 downto 0 );
-
-    ------------------------
-    -- Read address channel
-    ------------------------
-    AXI_arready : in  std_logic;
-    AXI_arvalid : out std_logic;
-    AXI_araddr  : out std_logic_vector;
-    AXI_arid    : out std_logic_vector( 31 downto 20 );
-    AXI_arlen   : out std_logic_vector( 19 downto 16 );
-    AXI_arsize  : out std_logic_vector( 15 downto 13 );
-    AXI_arburst : out std_logic_vector( 12 downto 11 );
-    AXI_arlock  : out std_logic_vector( 10 downto 9 );
-    AXI_arcache : out std_logic_vector(  8 downto 6 );
-    AXI_arprot  : out std_logic_vector(  5 downto 3 );
-    AXI_arqos   : out std_logic_vector(  2 downto 0 );
 
     ------------------------
     -- Read data channel
@@ -146,9 +146,9 @@ architecture Behavioral of AXI4_Full_Master is
     constant A4F_wrrsp_width    : natural := 14;
 
 
+    signal AXI_rdrqA_data   : std_logic_vector(A4F_rdrqa_width - 1 downto 0);
     signal AXI_wrrqA_data   : std_logic_vector(A4F_wrrqa_width - 1 downto 0);
     signal AXI_wrrqD_data   : std_logic_vector(A4F_wrrqd_width - 1 downto 0);
-    signal AXI_rdrqA_data   : std_logic_vector(A4F_rdrqa_width - 1 downto 0);
     signal AXI_rdrsp_data   : std_logic_vector(A4F_rdrsp_width - 1 downto 0);
     signal AXI_wrrsp_data   : std_logic_vector(A4F_wrrsp_width - 1 downto 0);
 begin
@@ -175,9 +175,25 @@ begin
     AXI_wid         <= AXI_wrrqD_data(AXI_wid'range);
     AXI_wstrb       <= AXI_wrrqD_data(AXI_wstrb'range);
     AXI_wlast       <= AXI_wrrqD_data(AXI_wlast'range);
-    
+
     AXI_rdrsp_data  <= AXI_rdata & AXI_rid & AXI_rresp & AXI_rlast;
     AXI_wrrsp_data  <= AXI_bid & AXI_bresp;
+
+    FIFO_RDRQA: STD_FIFO
+    generic map(
+        fifo_depth      => 2
+    )
+    port map(
+        clk             => clk,
+        rst             => rst,
+
+        WrValid_in      => rdrqA_put_en,
+        WrReady_out     => rdrqA_put_ready,
+		WrData_in       => rdrqA_put_data,
+		RdValid_out     => AXI_arvalid,
+		RdReady_in      => AXI_arready,
+		RdData_out      => AXI_rdrqA_data
+    );
 
     FIFO_WRRQA: STD_FIFO
     generic map(
@@ -209,22 +225,6 @@ begin
 		RdValid_out     => AXI_wvalid,
 		RdReady_in      => AXI_wready,
 		RdData_out      => AXI_wrrqD_data
-    );
-    
-    FIFO_RDRQA: STD_FIFO
-    generic map(
-        fifo_depth      => 2
-    )
-    port map(
-        clk             => clk,
-        rst             => rst,
-
-        WrValid_in      => rdrqA_put_en,
-        WrReady_out     => rdrqA_put_ready,
-		WrData_in       => rdrqA_put_data,
-		RdValid_out     => AXI_arvalid,
-		RdReady_in      => AXI_arready,
-		RdData_out      => AXI_rdrqA_data
     );
 
     FIFO_RDRSP: STD_FIFO

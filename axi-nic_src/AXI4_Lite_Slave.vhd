@@ -35,6 +35,14 @@ entity AXI4_Lite_Slave is
     -- Connect to a Master Interface
     ---------------------------------
     ------------------------
+    -- Read address channel
+    ------------------------
+    AXI_arready : out std_logic;
+    AXI_arvalid : in  std_logic;
+    AXI_araddr  : in  std_logic_vector;
+    AXI_arprot  : in  std_logic_vector( 2 downto 0 );
+
+    ------------------------
     -- Write address channel    
     ------------------------
     AXI_awready : out std_logic;
@@ -49,14 +57,6 @@ entity AXI4_Lite_Slave is
     AXI_wvalid  : in  std_logic;
     AXI_wdata   : in  std_logic_vector;
     AXI_wstrb   : in  std_logic_vector( 3 downto 0 );
-
-    ------------------------
-    -- Read address channel
-    ------------------------
-    AXI_arready : out std_logic;
-    AXI_arvalid : in  std_logic;
-    AXI_araddr  : in  std_logic_vector;
-    AXI_arprot  : in  std_logic_vector( 2 downto 0 );
 
     ------------------------
     -- Read data channel
@@ -127,9 +127,9 @@ architecture Behavioral of AXI4_Lite_Slave is
     constant A4L_wrrsp_width    : natural := 2;
 
 
+    signal AXI_rdrqa_data   : std_logic_vector(A4L_rdrqa_width - 1 downto 0);
     signal AXI_wrrqa_data   : std_logic_vector(A4L_wrrqa_width - 1 downto 0);
     signal AXI_wrrqd_data   : std_logic_vector(A4L_wrrqd_width - 1 downto 0);
-    signal AXI_rdrqa_data   : std_logic_vector(A4L_rdrqa_width - 1 downto 0);
     signal AXI_rdrsp_data   : std_logic_vector(A4L_rdrsp_width - 1 downto 0);
     signal AXI_wrrsp_data   : std_logic_vector(A4L_wrrsp_width - 1 downto 0);
 begin
@@ -141,6 +141,22 @@ begin
     AXI_bresp       <= AXI_wrrsp_data(AXI_bresp'range);
     AXI_rdata       <= AXI_rdrsp_data(A4L_rdata_range_l downto A4L_rdata_range_r);
     AXI_rresp       <= AXI_rdrsp_data(AXI_rresp'range);
+
+    FIFO_RDRQA: STD_FIFO
+    generic map(
+        fifo_depth      => 2
+    )
+    port map(
+        clk             => clk,
+        rst             => rst,
+
+		WrValid_in      => AXI_arvalid,
+        WrReady_out     => AXI_arready,
+		WrData_in       => AXI_rdrqa_data,
+		RdValid_out     => rdrqA_get_valid,
+		RdReady_in      => rdrqA_get_en,
+		RdData_out      => rdrqA_get_data
+    );
 
     FIFO_WRRQA: STD_FIFO
     generic map(
@@ -174,22 +190,6 @@ begin
 		RdData_out      => wrrqD_get_data
     );
     
-    FIFO_RDRQA: STD_FIFO
-    generic map(
-        fifo_depth      => 2
-    )
-    port map(
-        clk             => clk,
-        rst             => rst,
-
-		WrValid_in      => AXI_arvalid,
-        WrReady_out     => AXI_arready,
-		WrData_in       => AXI_rdrqa_data,
-		RdValid_out     => rdrqA_get_valid,
-		RdReady_in      => rdrqA_get_en,
-		RdData_out      => rdrqA_get_data
-    );
-
     FIFO_RDRSP: STD_FIFO
     generic map(
         fifo_depth      => 2

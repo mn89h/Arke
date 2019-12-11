@@ -35,6 +35,21 @@ entity AXI4_Full_Slave is
     -- Connect to a Master Interface
     ---------------------------------
     ------------------------
+    -- Read address channel
+    ------------------------
+    AXI_arready : out std_logic;
+    AXI_arvalid : in  std_logic;
+    AXI_araddr  : in  std_logic_vector;
+    AXI_arid    : in  std_logic_vector( 31 downto 20 );
+    AXI_arlen   : in  std_logic_vector( 19 downto 16 );
+    AXI_arsize  : in  std_logic_vector( 15 downto 13 );
+    AXI_arburst : in  std_logic_vector( 12 downto 11 );
+    AXI_arlock  : in  std_logic_vector( 10 downto 9 );
+    AXI_arcache : in  std_logic_vector(  8 downto 6 );
+    AXI_arprot  : in  std_logic_vector(  5 downto 3 );
+    AXI_arqos   : in  std_logic_vector(  2 downto 0 );
+
+    ------------------------
     -- Write address channel    
     ------------------------
     AXI_awready : out std_logic;
@@ -58,21 +73,6 @@ entity AXI4_Full_Slave is
     AXI_wid     : in  std_logic_vector( 16 downto 5 );
     AXI_wstrb   : in  std_logic_vector(  4 downto 1 );
     AXI_wlast   : in  std_logic_vector(  0 downto 0 );
-
-    ------------------------
-    -- Read address channel
-    ------------------------
-    AXI_arready : out std_logic;
-    AXI_arvalid : in  std_logic;
-    AXI_araddr  : in  std_logic_vector;
-    AXI_arid    : in  std_logic_vector( 31 downto 20 );
-    AXI_arlen   : in  std_logic_vector( 19 downto 16 );
-    AXI_arsize  : in  std_logic_vector( 15 downto 13 );
-    AXI_arburst : in  std_logic_vector( 12 downto 11 );
-    AXI_arlock  : in  std_logic_vector( 10 downto 9 );
-    AXI_arcache : in  std_logic_vector(  8 downto 6 );
-    AXI_arprot  : in  std_logic_vector(  5 downto 3 );
-    AXI_arqos   : in  std_logic_vector(  2 downto 0 );
 
     ------------------------
     -- Read data channel
@@ -146,15 +146,15 @@ architecture Behavioral of AXI4_Full_Slave is
     constant A4F_wrrsp_width    : natural := 14;
 
 
+    signal AXI_rdrqA_data   : std_logic_vector(A4F_rdrqa_width - 1 downto 0);
     signal AXI_wrrqA_data   : std_logic_vector(A4F_wrrqa_width - 1 downto 0);
     signal AXI_wrrqD_data   : std_logic_vector(A4F_wrrqd_width - 1 downto 0);
-    signal AXI_rdrqA_data   : std_logic_vector(A4F_rdrqa_width - 1 downto 0);
     signal AXI_rdrsp_data   : std_logic_vector(A4F_rdrsp_width - 1 downto 0);
     signal AXI_wrrsp_data   : std_logic_vector(A4F_wrrsp_width - 1 downto 0);
 begin
+    AXI_rdrqA_data  <= AXI_araddr & AXI_arid & AXI_arlen & AXI_arsize & AXI_arburst & AXI_arlock & AXI_arcache & AXI_arprot & AXI_arqos;
     AXI_wrrqA_data  <= AXI_awaddr & AXI_awid & AXI_awlen & AXI_awsize & AXI_awburst & AXI_awlock & AXI_awcache & AXI_awprot & AXI_awqos;
     AXI_wrrqA_data  <= AXI_wdata & AXI_wid & AXI_wstrb & AXI_wlast;
-    AXI_rdrqA_data  <= AXI_araddr & AXI_arid & AXI_arlen & AXI_arsize & AXI_arburst & AXI_arlock & AXI_arcache & AXI_arprot & AXI_arqos;
 
     AXI_rdata       <= AXI_rdrsp_data(A4F_rdata_range_l downto A4F_rdata_range_r);
     AXI_rid         <= AXI_rdrsp_data(AXI_rid'range);
@@ -162,6 +162,22 @@ begin
     AXI_rlast       <= AXI_rdrsp_data(AXI_rlast'range);
     AXI_bid         <= AXI_wrrsp_data(AXI_bid'range);
     AXI_bresp       <= AXI_wrrsp_data(AXI_bresp'range);
+
+    FIFO_RDRQA: STD_FIFO
+    generic map(
+        fifo_depth      => 2
+    )
+    port map(
+        clk             => clk,
+        rst             => rst,
+
+		WrValid_in      => AXI_arvalid,
+        WrReady_out     => AXI_arready,
+		WrData_in       => AXI_rdrqA_data,
+		RdValid_out     => rdrqA_get_valid,
+		RdReady_in      => rdrqA_get_en,
+		RdData_out      => rdrqA_get_data
+    );
 
     FIFO_WRRQA: STD_FIFO
     generic map(
@@ -195,22 +211,6 @@ begin
 		RdData_out      => wrrqD_get_data
     );
     
-    FIFO_RDRQA: STD_FIFO
-    generic map(
-        fifo_depth      => 2
-    )
-    port map(
-        clk             => clk,
-        rst             => rst,
-
-		WrValid_in      => AXI_arvalid,
-        WrReady_out     => AXI_arready,
-		WrData_in       => AXI_rdrqA_data,
-		RdValid_out     => rdrqA_get_valid,
-		RdReady_in      => rdrqA_get_en,
-		RdData_out      => rdrqA_get_data
-    );
-
     FIFO_RDRSP: STD_FIFO
     generic map(
         fifo_depth      => 2
