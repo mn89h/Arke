@@ -22,7 +22,6 @@ use work.NIC_pkg.all;
 
 entity STD_FIFO is
 	Generic (
-		data_width	: positive := AXI4_Lite_Wr_RqA_WIDTH;
 		fifo_depth	: positive := STD_FIFO_FIFO_DEPTH
 	);
 	Port ( 
@@ -30,15 +29,15 @@ entity STD_FIFO is
 		rst			: in  std_logic;
 		WrValid_in	: in  std_logic;
 		WrReady_out	: out std_logic;
-		WrData_in	: in  std_logic_vector(data_width - 1 downto 0);
+		WrData_in	: in  std_logic_vector;
 		RdReady_in	: in  std_logic;
-		RdData_out	: out std_logic_vector(data_width - 1 downto 0);
+		RdData_out	: out std_logic_vector;
 		RdValid_out	: out std_logic 
 	);
 end STD_FIFO;
 
 architecture Behavioral of STD_FIFO is
-		type fifo_memory is array (0 to fifo_depth - 1) of std_logic_vector(data_width - 1 downto 0);
+		type fifo_memory is array (0 to fifo_depth - 1) of std_logic_vector(WrData_in'length - 1 downto 0);
 		signal Memory : fifo_memory := (others => (others => '0'));
 		
 		signal wr_pointer : natural range 0 to fifo_depth - 1 := 0;
