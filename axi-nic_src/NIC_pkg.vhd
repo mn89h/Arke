@@ -44,6 +44,7 @@ package NIC_pkg is
         data     : std_logic_vector ( DATA_WIDTH - 5 downto 0 );
     end record;
 
+
     --------------------
     -- AXI4Full Types --
     --------------------
@@ -150,16 +151,13 @@ package NIC_pkg is
     function serialize_A4L_Rd_Rsp(dIn : AXI4_Lite_Rd_Rsp) return std_logic_vector;
     function deserialize_A4L_Rd_Rsp(dIn : std_logic_vector(AXI4_Lite_Rd_Rsp_WIDTH - 1 downto 0)) return AXI4_Lite_Rd_Rsp;
 
-    
 
-
-
-
+    ---------------------------
+    -- Component Declaration --
+    ---------------------------
 
     component STD_FIFO is
         Generic (
-            -- fifo_width  : positive := FIFO_WIDTH;
-            data_width  : positive := AXI4_Full_Wr_RqA_WIDTH; -- VHDL-2008+ / Vivado 2019.1+ - replaces vectors w/ fifo_width generic and (de-)serialize functions
             fifo_depth	: positive
         );
         Port ( 
@@ -167,278 +165,252 @@ package NIC_pkg is
             rst			: in  std_logic;
             WrValid_in	: in  std_logic;
             WrReady_out	: out std_logic;
-            WrData_in	: in  std_logic_vector(data_width - 1 downto 0);
+            WrData_in	: in  std_logic_vector;
             RdReady_in	: in  std_logic;
-            RdData_out  : out std_logic_vector(data_width - 1 downto 0);
+            RdData_out  : out std_logic_vector;
             RdValid_out	: out std_logic 
-        );
-    end component;
-
-    component STD_FIFO_WrRqA is
-        Generic (
-            fifo_depth	: positive
-        );
-        Port ( 
-            clk		: in  std_logic;
-            rst		: in  std_logic;
-            WriteEn	: in  std_logic;
-            DataIn	: in  AXI4_Full_Wr_RqA;
-            ReadEn	: in  std_logic;
-            DataOut	: out AXI4_Full_Wr_RqA;
-            Empty	: out std_logic;
-            Full	: out std_logic
-        );
-    end component;
-
-    component STD_FIFO_WrRqD is
-        Generic (
-            fifo_depth	: positive
-        );
-        Port ( 
-            clk		: in  std_logic;
-            rst		: in  std_logic;
-            WriteEn	: in  std_logic;
-            DataIn	: in  AXI4_Full_Wr_RqD;
-            ReadEn	: in  std_logic;
-            DataOut	: out AXI4_Full_Wr_RqD;
-            Empty	: out std_logic;
-            Full	: out std_logic
-        );
-    end component;
-
-    component STD_FIFO_RdRqA is
-        Generic (
-            fifo_depth	: positive
-        );
-        Port ( 
-            clk		: in  std_logic;
-            rst		: in  std_logic;
-            WriteEn	: in  std_logic;
-            DataIn	: in  AXI4_Full_Rd_RqA;
-            ReadEn	: in  std_logic;
-            DataOut	: out AXI4_Full_Rd_RqA;
-            Empty	: out std_logic;
-            Full	: out std_logic
-        );
-    end component;
-
-    component STD_FIFO_RdRsp is
-        Generic (
-            fifo_depth	: positive
-        );
-        Port ( 
-            clk		: in  std_logic;
-            rst		: in  std_logic;
-            WriteEn	: in  std_logic;
-            DataIn	: in  AXI4_Full_Rd_Rsp;
-            ReadEn	: in  std_logic;
-            DataOut	: out AXI4_Full_Rd_Rsp;
-            Empty	: out std_logic;
-            Full	: out std_logic
-        );
-    end component;
-
-    component STD_FIFO_WrRsp is
-        Generic (
-            fifo_depth	: positive
-        );
-        Port ( 
-            clk		: in  std_logic;
-            rst		: in  std_logic;
-            WriteEn	: in  std_logic;
-            DataIn	: in  AXI4_Full_Wr_Rsp;
-            ReadEn	: in  std_logic;
-            DataOut	: out AXI4_Full_Wr_Rsp;
-            Empty	: out std_logic;
-            Full	: out std_logic
         );
     end component;
 
     component AXI4_Full_Master is
         Port (
-            clk         : in std_logic;
-            rst         : in std_logic; 
+            clk             : in  std_logic;
+            rst             : in  std_logic; 
 
-            AXI_arvalid     : out std_logic;
             AXI_arready     : in  std_logic;
-            AXI_rdrqA_data  : out AXI4_Full_Rd_RqA;
+            AXI_arvalid     : out std_logic;
+            AXI_araddr      : out std_logic_vector;
+            AXI_arid        : out std_logic_vector( 31 downto 20 );
+            AXI_arlen       : out std_logic_vector( 19 downto 16 );
+            AXI_arsize      : out std_logic_vector( 15 downto 13 );
+            AXI_arburst     : out std_logic_vector( 12 downto 11 );
+            AXI_arlock      : out std_logic_vector( 10 downto 9 );
+            AXI_arcache     : out std_logic_vector(  8 downto 6 );
+            AXI_arprot      : out std_logic_vector(  5 downto 3 );
+            AXI_arqos       : out std_logic_vector(  2 downto 0 );
 
-            AXI_awvalid     : out std_logic;
             AXI_awready     : in  std_logic;
-            AXI_wrrqA_data  : out AXI4_Full_Wr_RqA;
+            AXI_awvalid     : out std_logic;    
+            AXI_awaddr      : out std_logic_vector;
+            AXI_awid        : out std_logic_vector( 31 downto 20 );
+            AXI_awlen       : out std_logic_vector( 19 downto 16 );
+            AXI_awsize      : out std_logic_vector( 15 downto 13 );
+            AXI_awburst     : out std_logic_vector( 12 downto 11 );
+            AXI_awlock      : out std_logic_vector( 10 downto 9 );
+            AXI_awcache     : out std_logic_vector(  8 downto 6 );
+            AXI_awprot      : out std_logic_vector(  5 downto 3 );
+            AXI_awqos       : out std_logic_vector(  2 downto 0 );
 
-            AXI_wvalid      : out std_logic;
             AXI_wready      : in  std_logic;
-            AXI_wrrqD_data  : out AXI4_Full_Wr_RqD;
+            AXI_wvalid      : out std_logic;
+            AXI_wdata       : out std_logic_vector;
+            AXI_wid         : out std_logic_vector( 16 downto 5 );
+            AXI_wstrb       : out std_logic_vector(  4 downto 1 );
+            AXI_wlast       : out std_logic_vector(  0 downto 0 );
 
             AXI_rready      : out std_logic;
             AXI_rvalid      : in  std_logic;
-            AXI_rdrsp_data  : in  AXI4_Full_Rd_Rsp;
+            AXI_rdata       : in  std_logic_vector;
+            AXI_rid         : in  std_logic_vector( 14 downto 3 );
+            AXI_rresp       : in  std_logic_vector(  2 downto 1 );
+            AXI_rlast       : in  std_logic_vector(  0 downto 0 );
 
             AXI_bready      : out std_logic;
             AXI_bvalid      : in  std_logic;
-            AXI_wrrsp_data  : in  AXI4_Full_Wr_Rsp;
+            AXI_bid         : in  std_logic_vector( 13 downto 2 );
+            AXI_bresp       : in  std_logic_vector(  1 downto 0 );
 
-            rdrqA_put_en    : in  std_logic;
-            rdrqA_put_ready : out std_logic;
-            rdrqA_put_data  : in  AXI4_Full_Rd_RqA;
+            rdrqA_get_valid : in  std_logic;
+            rdrqA_get_en    : out std_logic;
+            rdrqA_get_data  : in  std_logic_vector;
 
-            wrrqA_put_en    : in  std_logic;
-            wrrqA_put_ready : out std_logic;
-            wrrqA_put_data  : in  AXI4_Full_Wr_RqA;
+            wrrqA_get_valid : in  std_logic;
+            wrrqA_get_en    : out std_logic;
+            wrrqA_get_data  : in  std_logic_vector;
 
-            wrrqD_put_en    : in  std_logic;
-            wrrqD_put_ready : out std_logic;
-            wrrqD_put_data  : in  AXI4_Full_Wr_RqD;
+            wrrqD_get_valid : in  std_logic;
+            wrrqD_get_en    : out std_logic;
+            wrrqD_get_data  : in  std_logic_vector;
 
-            rdrsp_get_valid : out std_logic;
-            rdrsp_get_en    : in  std_logic;
-            rdrsp_get_data  : out AXI4_Full_Rd_Rsp;
+            rdrsp_put_ready : in  std_logic;
+            rdrsp_put_en    : out std_logic;
+            rdrsp_put_data  : out std_logic_vector;
 
-            wrrsp_get_valid : out std_logic;
-            wrrsp_get_en    : in  std_logic;
-            wrrsp_get_data  : out AXI4_Full_Wr_Rsp
+            wrrsp_put_ready : in  std_logic;
+            wrrsp_put_en    : out std_logic;
+            wrrsp_put_data  : out std_logic_vector
         );
     end component;
 
     component AXI4_Full_Slave is
         Port (
-            clk         : in std_logic;
-            rst         : in std_logic; 
+            clk             : in  std_logic;
+            rst             : in  std_logic; 
 
-            AXI_arvalid     : in  std_logic;
             AXI_arready     : out std_logic;
-            AXI_rdrqA_data  : in  AXI4_Full_Rd_RqA;
+            AXI_arvalid     : in  std_logic;
+            AXI_araddr      : in  std_logic_vector;
+            AXI_arid        : in  std_logic_vector( 31 downto 20 );
+            AXI_arlen       : in  std_logic_vector( 19 downto 16 );
+            AXI_arsize      : in  std_logic_vector( 15 downto 13 );
+            AXI_arburst     : in  std_logic_vector( 12 downto 11 );
+            AXI_arlock      : in  std_logic_vector( 10 downto 9 );
+            AXI_arcache     : in  std_logic_vector(  8 downto 6 );
+            AXI_arprot      : in  std_logic_vector(  5 downto 3 );
+            AXI_arqos       : in  std_logic_vector(  2 downto 0 );
 
-            AXI_awvalid     : in  std_logic;
             AXI_awready     : out std_logic;
-            AXI_wrrqA_data  : in  AXI4_Full_Wr_RqA;
+            AXI_awvalid     : in  std_logic;    
+            AXI_awaddr      : in  std_logic_vector;
+            AXI_awid        : in  std_logic_vector( 31 downto 20 );
+            AXI_awlen       : in  std_logic_vector( 19 downto 16 );
+            AXI_awsize      : in  std_logic_vector( 15 downto 13 );
+            AXI_awburst     : in  std_logic_vector( 12 downto 11 );
+            AXI_awlock      : in  std_logic_vector( 10 downto 9 );
+            AXI_awcache     : in  std_logic_vector(  8 downto 6 );
+            AXI_awprot      : in  std_logic_vector(  5 downto 3 );
+            AXI_awqos       : in  std_logic_vector(  2 downto 0 );
 
-            AXI_wvalid      : in  std_logic;
             AXI_wready      : out std_logic;
-            AXI_wrrqD_data  : in  AXI4_Full_Wr_RqD;
+            AXI_wvalid      : in  std_logic;
+            AXI_wdata       : in  std_logic_vector;
+            AXI_wid         : in  std_logic_vector( 16 downto 5 );
+            AXI_wstrb       : in  std_logic_vector(  4 downto 1 );
+            AXI_wlast       : in  std_logic_vector(  0 downto 0 );
 
             AXI_rready      : in  std_logic;
             AXI_rvalid      : out std_logic;
-            AXI_rdrsp_data  : out AXI4_Full_Rd_Rsp;
+            AXI_rdata       : out std_logic_vector;
+            AXI_rid         : out std_logic_vector( 14 downto 3 );
+            AXI_rresp       : out std_logic_vector(  2 downto 1 );
+            AXI_rlast       : out std_logic_vector(  0 downto 0 );
 
             AXI_bready      : in  std_logic;
             AXI_bvalid      : out std_logic;
-            AXI_wrrsp_data  : out AXI4_Full_Wr_Rsp;
+            AXI_bid         : out std_logic_vector( 13 downto 2 );
+            AXI_bresp       : out std_logic_vector(  1 downto 0 );
 
             rdrqA_get_valid : out std_logic;
             rdrqA_get_en    : in  std_logic;
-            rdrqA_get_data  : out AXI4_Full_Rd_RqA;
+            rdrqA_get_data  : out std_logic_vector;
 
             wrrqA_get_valid : out std_logic;
             wrrqA_get_en    : in  std_logic;
-            wrrqA_get_data  : out AXI4_Full_Wr_RqA;
+            wrrqA_get_data  : out std_logic_vector;
 
             wrrqD_get_valid : out std_logic;
             wrrqD_get_en    : in  std_logic;
-            wrrqD_get_data  : out AXI4_Full_Wr_RqD;
+            wrrqD_get_data  : out std_logic_vector;
 
-            rdrsp_put_ready : out std_logic;
             rdrsp_put_en    : in  std_logic;
-            rdrsp_put_data  : in  AXI4_Full_Rd_Rsp;
+            rdrsp_put_ready : out std_logic;
+            rdrsp_put_data  : in  std_logic_vector;
 
-            wrrsp_put_ready : out std_logic;
             wrrsp_put_en    : in  std_logic;
-            wrrsp_put_data  : in  AXI4_Full_Wr_Rsp
+            wrrsp_put_ready : out std_logic;
+            wrrsp_put_data  : in  std_logic_vector
         );
     end component;
     
     component AXI4_Lite_Slave is
         Port (
-            clk         : in std_logic;
-            rst         : in std_logic; 
+            clk             : in  std_logic;
+            rst             : in  std_logic; 
 
             AXI_arvalid     : in  std_logic;
             AXI_arready     : out std_logic;
-            AXI_rdrqA_data  : in  AXI4_Lite_Rd_RqA;
+            AXI_araddr      : in  std_logic_vector;
+            AXI_arprot      : in  std_logic_vector( 2 downto 0 );
 
             AXI_awvalid     : in  std_logic;
             AXI_awready     : out std_logic;
-            AXI_wrrqA_data  : in  AXI4_Lite_Wr_RqA;
+            AXI_awaddr      : in  std_logic_vector;
+            AXI_awprot      : in  std_logic_vector( 2 downto 0 );
 
             AXI_wvalid      : in  std_logic;
             AXI_wready      : out std_logic;
-            AXI_wrrqD_data  : in  AXI4_Lite_Wr_RqD;
+            AXI_wdata       : in  std_logic_vector;
+            AXI_wstrb       : in  std_logic_vector( 3 downto 0 );
 
             AXI_rready      : in  std_logic;
             AXI_rvalid      : out std_logic;
-            AXI_rdrsp_data  : out AXI4_Lite_Rd_Rsp;
+            AXI_rdata       : out std_logic_vector;
+            AXI_rresp       : out std_logic_vector( 1 downto 0 );
 
             AXI_bready      : in  std_logic;
             AXI_bvalid      : out std_logic;
-            AXI_wrrsp_data  : out AXI4_Lite_Wr_Rsp;
+            AXI_bresp       : out std_logic_vector( 1 downto 0 );
 
             rdrqA_get_valid : out std_logic;
             rdrqA_get_en    : in  std_logic;
-            rdrqA_get_data  : out AXI4_Lite_Rd_RqA;
+            rdrqA_get_data  : out std_logic_vector;
 
             wrrqA_get_valid : out std_logic;
             wrrqA_get_en    : in  std_logic;
-            wrrqA_get_data  : out AXI4_Lite_Wr_RqA;
+            wrrqA_get_data  : out std_logic_vector;
 
             wrrqD_get_valid : out std_logic;
             wrrqD_get_en    : in  std_logic;
-            wrrqD_get_data  : out AXI4_Lite_Wr_RqD;
+            wrrqD_get_data  : out std_logic_vector;
 
             rdrsp_put_ready : out std_logic;
             rdrsp_put_en    : in  std_logic;
-            rdrsp_put_data  : in  AXI4_Lite_Rd_Rsp;
+            rdrsp_put_data  : in  std_logic_vector;
 
             wrrsp_put_ready : out std_logic;
             wrrsp_put_en    : in  std_logic;
-            wrrsp_put_data  : in  AXI4_Lite_Wr_Rsp
+            wrrsp_put_data  : in  std_logic_vector
         );
     end component;
 
     component AXI4_Lite_Master is
         Port (
-            clk         : in std_logic;
-            rst         : in std_logic; 
+            clk             : in  std_logic;
+            rst             : in  std_logic; 
 
             AXI_arvalid     : out std_logic;
             AXI_arready     : in  std_logic;
-            AXI_rdrqA_data  : out AXI4_Lite_Rd_RqA;
+            AXI_araddr      : out std_logic_vector;
+            AXI_arprot      : out std_logic_vector( 2 downto 0 );
 
             AXI_awvalid     : out std_logic;
             AXI_awready     : in  std_logic;
-            AXI_wrrqA_data  : out AXI4_Lite_Wr_RqA;
+            AXI_awaddr      : out std_logic_vector;
+            AXI_awprot      : out std_logic_vector( 2 downto 0 );
 
             AXI_wvalid      : out std_logic;
             AXI_wready      : in  std_logic;
-            AXI_wrrqD_data  : out AXI4_Lite_Wr_RqD;
+            AXI_wdata       : out std_logic_vector;
+            AXI_wstrb       : out std_logic_vector( 3 downto 0 );
 
             AXI_rready      : out std_logic;
             AXI_rvalid      : in  std_logic;
-            AXI_rdrsp_data  : in  AXI4_Lite_Rd_Rsp;
+            AXI_rdata       : in  std_logic_vector;
+            AXI_rresp       : in  std_logic_vector( 1 downto 0 );
 
             AXI_bready      : out std_logic;
             AXI_bvalid      : in  std_logic;
-            AXI_wrrsp_data  : in  AXI4_Lite_Wr_Rsp;
+            AXI_bresp       : in  std_logic_vector( 1 downto 0 );
 
-            rdrqA_put_en    : in  std_logic;
-            rdrqA_put_ready : out std_logic;
-            rdrqA_put_data  : in  AXI4_Lite_Rd_RqA;
+            rdrqA_get_valid : in  std_logic;
+            rdrqA_get_en    : out std_logic;
+            rdrqA_get_data  : in  std_logic_vector;
 
-            wrrqA_put_en    : in  std_logic;
-            wrrqA_put_ready : out std_logic;
-            wrrqA_put_data  : in  AXI4_Lite_Wr_RqA;
+            wrrqA_get_valid : in  std_logic;
+            wrrqA_get_en    : out std_logic;
+            wrrqA_get_data  : in  std_logic_vector;
 
-            wrrqD_put_en    : in  std_logic;
-            wrrqD_put_ready : out std_logic;
-            wrrqD_put_data  : in  AXI4_Lite_Wr_RqD;
+            wrrqD_get_valid : in  std_logic;
+            wrrqD_get_en    : out std_logic;
+            wrrqD_get_data  : in  std_logic_vector;
 
-            rdrsp_get_valid : out std_logic;
-            rdrsp_get_en    : in  std_logic;
-            rdrsp_get_data  : out AXI4_Lite_Rd_Rsp;
+            rdrsp_put_ready : in  std_logic;
+            rdrsp_put_en    : out std_logic;
+            rdrsp_put_data  : out std_logic_vector;
 
-            wrrsp_get_valid : out std_logic;
-            wrrsp_get_en    : in  std_logic;
-            wrrsp_get_data  : out AXI4_Lite_Wr_Rsp
+            wrrsp_put_ready : in  std_logic;
+            wrrsp_put_en    : out std_logic;
+            wrrsp_put_data  : out std_logic_vector
         );
     end component;
 
