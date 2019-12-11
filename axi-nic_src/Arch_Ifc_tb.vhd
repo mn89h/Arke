@@ -1,22 +1,18 @@
 -------------------------------------------------------------------------------
 -- Title      : Testbench for design "Arch_Ifc"
--- Project    : 
+-- Project    : TaPaSCo NoC Integration
 -------------------------------------------------------------------------------
 -- File       : Arch_Ifc_tb.vhd
--- Author     : malte  <malte@linux.fritz.box>
+-- Author     : Malte Nilges
 -- Company    : 
 -- Created    : 2019-11-24
--- Last update: 2019-11-24
+-- Last update: 2019-12-09
 -- Platform   : 
--- Standard   : VHDL'93/02
+-- Standard   : VHDL'08
 -------------------------------------------------------------------------------
--- Description: 
+-- Description: Testbench for Arch_Ifc
 -------------------------------------------------------------------------------
 -- Copyright (c) 2019 
--------------------------------------------------------------------------------
--- Revisions  :
--- Date        Version  Author  Description
--- 2019-11-24  1.0      malte	Created
 -------------------------------------------------------------------------------
 
 library ieee;
@@ -303,4 +299,3 @@ configuration Arch_Ifc_tb_tb1_cfg of Arch_Ifc_tb is
 end Arch_Ifc_tb_tb1_cfg;
 
 -------------------------------------------------------------------------------
-  -------------------------------------------------------------------------------

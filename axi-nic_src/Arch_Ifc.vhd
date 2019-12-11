@@ -26,6 +26,8 @@ library work;
 use work.NIC_pkg.all;
 use work.Arke_pkg.all;
 
+-------------------------------------------------------------------------------
+
 entity Arch_Ifc is
     generic (
         address: std_logic_vector;
@@ -56,6 +58,8 @@ entity Arch_Ifc is
         signal controlIn        : in  std_logic_vector(CONTROL_WIDTH - 1 downto 0)
     );
 end Arch_Ifc;
+
+-------------------------------------------------------------------------------
 
 architecture Behavioral of Arch_Ifc is
 
@@ -151,13 +155,18 @@ architecture Behavioral of Arch_Ifc is
             variable vec_wrrqd      : std_logic_vector(AXI4_Lite_Wr_RqD_WIDTH - 1 downto 0);
             variable vec_rdrqa      : std_logic_vector(AXI4_Lite_Rd_RqA_WIDTH - 1 downto 0);
             variable address        : std_logic_vector(ADDR_W - 1 downto 0);
+            
         begin if rising_edge(clk) then
+            -----------
+            -- RESET --
+            -----------
             if (rst = '1') then
                 controlOut          <= "100";
                 dataOut             <= (others => '0');
                 state_send          <= RdRqA;
                 rsp_put_stalled     <= '0';
             else
+
             -------------------------------------
             -- A4L R/W REQUEST TO NETWORK DATA --
             -------------------------------------
@@ -165,7 +174,8 @@ architecture Behavioral of Arch_Ifc is
             -- If a request is valid, but the local router isn't able to receive data, the state remains the same
             -- otherwise it changes to the next state to look for valid data.
             -- The network destination is chosen by a address map in conjunction with the AXI address.
-
+            -------------------------------------
+            
             -- STATE 1: RDRQA
             if (state_send = RdRqA) then
                 wrrqA_get_en        <= '0';
@@ -260,7 +270,8 @@ architecture Behavioral of Arch_Ifc is
             --------------------------------------
             -- If the network sends data or data transfer is stalled because of the receiver not being ready
             -- attempts are made to hand the data to the receiver until it is ready
-            
+            --------------------------------------
+
             if ((controlIn(RX) = '1') or (rsp_put_stalled = '1')) then
                 if (dataIn(dataIn'left - 1) = '1') then
                     if(wrrsp_put_ready = '1') then
@@ -294,5 +305,4 @@ architecture Behavioral of Arch_Ifc is
     end process;
 end architecture;
 
-
-            
+-------------------------------------------------------------------------------
