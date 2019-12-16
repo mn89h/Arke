@@ -97,16 +97,16 @@ entity AXI4_Full_Master is
     -- Access GET Ifc: Enable the get request and validate the received data
     -- Access PUT Ifc: Check the ready signal and enable the data transfer
     ---------------------------------
-    rdrqA_put_ready : out std_logic;
     rdrqA_put_en    : in  std_logic;
+    rdrqA_put_ready : out std_logic;
     rdrqA_put_data  : in  std_logic_vector;
 
-    wrrqA_put_ready : out std_logic;
     wrrqA_put_en    : in  std_logic;
+    wrrqA_put_ready : out std_logic;
     wrrqA_put_data  : in  std_logic_vector;
 
-    wrrqD_put_ready : out std_logic;
     wrrqD_put_en    : in  std_logic;
+    wrrqD_put_ready : out std_logic;
     wrrqD_put_data  : in  std_logic_vector;
 
     rdrsp_get_valid : out std_logic;
@@ -129,19 +129,19 @@ architecture Behavioral of AXI4_Full_Master is
     -- RdRqA ranges
     constant A4F_araddr_range_l : natural := A4F_addr_width - 1 + 32;
     constant A4F_araddr_range_r : natural := 32;
-    constant A4F_rdrqa_width    : natural := A4F_araddr_range_l;
+    constant A4F_rdrqa_width    : natural := A4F_araddr_range_l + 1;
     -- WrRqA ranges
     constant A4F_awaddr_range_l : natural := A4F_addr_width - 1 + 32;
     constant A4F_awaddr_range_r : natural := 32;
-    constant A4F_wrrqa_width    : natural := A4F_awaddr_range_l;
+    constant A4F_wrrqa_width    : natural := A4F_awaddr_range_l + 1;
     -- WrRqD ranges
     constant A4F_wdata_range_l  : natural := A4F_data_width - 1 + 17;
     constant A4F_wdata_range_r  : natural := 17;
-    constant A4F_wrrqd_width    : natural := A4F_wdata_range_l;
+    constant A4F_wrrqd_width    : natural := A4F_wdata_range_l + 1;
     -- RdRsp ranges
     constant A4F_rdata_range_l  : natural := A4F_data_width - 1 + 15;
     constant A4F_rdata_range_r  : natural := 15;
-    constant A4F_rdrsp_width    : natural := A4F_rdata_range_l;
+    constant A4F_rdrsp_width    : natural := A4F_rdata_range_l + 1;
     -- WrRsp ranges
     constant A4F_wrrsp_width    : natural := 14;
 

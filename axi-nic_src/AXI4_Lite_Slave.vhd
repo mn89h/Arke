@@ -104,25 +104,25 @@ end AXI4_Lite_Slave;
 
 architecture Behavioral of AXI4_Lite_Slave is
     
-    constant A4L_addr_width     : natural := AXI_araddr'length;
-    constant A4L_data_width     : natural := AXI_wdata'length;
+    constant A4L_addr_width     : natural := 8; --AXI_araddr'length;
+    constant A4L_data_width     : natural := 8; --AXI_wdata'length;
 
     -- RdRqA ranges
     constant A4L_araddr_range_l : natural := A4L_addr_width - 1 + 3;
     constant A4L_araddr_range_r : natural := 3;
-    constant A4L_rdrqa_width    : natural := A4L_araddr_range_l;
+    constant A4L_rdrqa_width    : natural := A4L_araddr_range_l + 1;
     -- WrRqA ranges
     constant A4L_awaddr_range_l : natural := A4L_addr_width - 1 + 3;
     constant A4L_awaddr_range_r : natural := 3;
-    constant A4L_wrrqa_width    : natural := A4L_awaddr_range_l;
+    constant A4L_wrrqa_width    : natural := A4L_awaddr_range_l + 1;
     -- WrRqD ranges
     constant A4L_wdata_range_l  : natural := A4L_data_width - 1 + 4;
     constant A4L_wdata_range_r  : natural := 4;
-    constant A4L_wrrqd_width    : natural := A4L_wdata_range_l;
+    constant A4L_wrrqd_width    : natural := A4L_wdata_range_l + 1;
     -- RdRsp ranges
     constant A4L_rdata_range_l  : natural := A4L_data_width - 1 + 2;
     constant A4L_rdata_range_r  : natural := 2;
-    constant A4L_rdrsp_width    : natural := A4L_rdata_range_l;
+    constant A4L_rdrsp_width    : natural := A4L_rdata_range_l + 1;
     -- WrRsp ranges
     constant A4L_wrrsp_width    : natural := 2;
 
@@ -134,13 +134,13 @@ architecture Behavioral of AXI4_Lite_Slave is
     signal AXI_wrrsp_data   : std_logic_vector(A4L_wrrsp_width - 1 downto 0);
 begin
 
+    AXI_rdrqa_data  <= AXI_araddr & AXI_arprot;
     AXI_wrrqa_data  <= AXI_awaddr & AXI_awprot;
     AXI_wrrqd_data  <= AXI_wdata & AXI_wstrb;
-    AXI_rdrqa_data  <= AXI_araddr & AXI_arprot;
     
-    AXI_bresp       <= AXI_wrrsp_data(AXI_bresp'range);
     AXI_rdata       <= AXI_rdrsp_data(A4L_rdata_range_l downto A4L_rdata_range_r);
     AXI_rresp       <= AXI_rdrsp_data(AXI_rresp'range);
+    AXI_bresp       <= AXI_wrrsp_data(AXI_bresp'range);
 
     FIFO_RDRQA: STD_FIFO
     generic map(

@@ -220,25 +220,25 @@ package NIC_pkg is
             AXI_bid         : in  std_logic_vector( 13 downto 2 );
             AXI_bresp       : in  std_logic_vector(  1 downto 0 );
 
-            rdrqA_get_valid : in  std_logic;
-            rdrqA_get_en    : out std_logic;
-            rdrqA_get_data  : in  std_logic_vector;
+            rdrqA_put_ready : out std_logic;
+            rdrqA_put_en    : in  std_logic;
+            rdrqA_put_data  : in  std_logic_vector;
 
-            wrrqA_get_valid : in  std_logic;
-            wrrqA_get_en    : out std_logic;
-            wrrqA_get_data  : in  std_logic_vector;
+            wrrqA_put_ready : out std_logic;
+            wrrqA_put_en    : in  std_logic;
+            wrrqA_put_data  : in  std_logic_vector;
 
-            wrrqD_get_valid : in  std_logic;
-            wrrqD_get_en    : out std_logic;
-            wrrqD_get_data  : in  std_logic_vector;
+            wrrqD_put_ready : out std_logic;
+            wrrqD_put_en    : in  std_logic;
+            wrrqD_put_data  : in  std_logic_vector;
 
-            rdrsp_put_ready : in  std_logic;
-            rdrsp_put_en    : out std_logic;
-            rdrsp_put_data  : out std_logic_vector;
+            rdrsp_get_valid : out std_logic;
+            rdrsp_get_en    : in  std_logic;
+            rdrsp_get_data  : out std_logic_vector;
 
-            wrrsp_put_ready : in  std_logic;
-            wrrsp_put_en    : out std_logic;
-            wrrsp_put_data  : out std_logic_vector
+            wrrsp_get_valid : out std_logic;
+            wrrsp_get_en    : in  std_logic;
+            wrrsp_get_data  : out std_logic_vector
         );
     end component;
 
@@ -392,25 +392,25 @@ package NIC_pkg is
             AXI_bvalid      : in  std_logic;
             AXI_bresp       : in  std_logic_vector( 1 downto 0 );
 
-            rdrqA_get_valid : in  std_logic;
-            rdrqA_get_en    : out std_logic;
-            rdrqA_get_data  : in  std_logic_vector;
+            rdrqA_put_ready : out std_logic;
+            rdrqA_put_en    : in  std_logic;
+            rdrqA_put_data  : in  std_logic_vector;
 
-            wrrqA_get_valid : in  std_logic;
-            wrrqA_get_en    : out std_logic;
-            wrrqA_get_data  : in  std_logic_vector;
+            wrrqA_put_ready : out std_logic;
+            wrrqA_put_en    : in  std_logic;
+            wrrqA_put_data  : in  std_logic_vector;
 
-            wrrqD_get_valid : in  std_logic;
-            wrrqD_get_en    : out std_logic;
-            wrrqD_get_data  : in  std_logic_vector;
+            wrrqD_put_ready : out std_logic;
+            wrrqD_put_en    : in  std_logic;
+            wrrqD_put_data  : in  std_logic_vector;
 
-            rdrsp_put_ready : in  std_logic;
-            rdrsp_put_en    : out std_logic;
-            rdrsp_put_data  : out std_logic_vector;
+            rdrsp_get_valid : out std_logic;
+            rdrsp_get_en    : in  std_logic;
+            rdrsp_get_data  : out std_logic_vector;
 
-            wrrsp_put_ready : in  std_logic;
-            wrrsp_put_en    : out std_logic;
-            wrrsp_put_data  : out std_logic_vector
+            wrrsp_get_valid : out std_logic;
+            wrrsp_get_en    : in  std_logic;
+            wrrsp_get_data  : out std_logic_vector
         );
     end component;
 

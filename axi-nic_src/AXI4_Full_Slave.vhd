@@ -129,19 +129,19 @@ architecture Behavioral of AXI4_Full_Slave is
     -- RdRqA ranges
     constant A4F_araddr_range_l : natural := A4F_addr_width - 1 + 32;
     constant A4F_araddr_range_r : natural := 32;
-    constant A4F_rdrqa_width    : natural := A4F_araddr_range_l;
+    constant A4F_rdrqa_width    : natural := A4F_araddr_range_l + 1;
     -- WrRqA ranges
     constant A4F_awaddr_range_l : natural := A4F_addr_width - 1 + 32;
     constant A4F_awaddr_range_r : natural := 32;
-    constant A4F_wrrqa_width    : natural := A4F_awaddr_range_l;
+    constant A4F_wrrqa_width    : natural := A4F_awaddr_range_l + 1;
     -- WrRqD ranges
     constant A4F_wdata_range_l  : natural := A4F_data_width - 1 + 17;
     constant A4F_wdata_range_r  : natural := 17;
-    constant A4F_wrrqd_width    : natural := A4F_wdata_range_l;
+    constant A4F_wrrqd_width    : natural := A4F_wdata_range_l + 1;
     -- RdRsp ranges
     constant A4F_rdata_range_l  : natural := A4F_data_width - 1 + 15;
     constant A4F_rdata_range_r  : natural := 15;
-    constant A4F_rdrsp_width    : natural := A4F_rdata_range_l;
+    constant A4F_rdrsp_width    : natural := A4F_rdata_range_l + 1;
     -- WrRsp ranges
     constant A4F_wrrsp_width    : natural := 14;
 

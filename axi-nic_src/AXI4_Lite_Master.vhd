@@ -110,19 +110,19 @@ architecture Behavioral of AXI4_Lite_Master is
     -- RdRqA ranges
     constant A4L_araddr_range_l : natural := A4L_addr_width - 1 + 3;
     constant A4L_araddr_range_r : natural := 3;
-    constant A4L_rdrqa_width    : natural := A4L_araddr_range_l;
+    constant A4L_rdrqa_width    : natural := A4L_araddr_range_l + 1;
     -- WrRqA ranges
     constant A4L_awaddr_range_l : natural := A4L_addr_width - 1 + 3;
     constant A4L_awaddr_range_r : natural := 3;
-    constant A4L_wrrqa_width    : natural := A4L_awaddr_range_l;
+    constant A4L_wrrqa_width    : natural := A4L_awaddr_range_l + 1;
     -- WrRqD ranges
     constant A4L_wdata_range_l  : natural := A4L_data_width - 1 + 4;
     constant A4L_wdata_range_r  : natural := 4;
-    constant A4L_wrrqd_width    : natural := A4L_wdata_range_l;
+    constant A4L_wrrqd_width    : natural := A4L_wdata_range_l + 1;
     -- RdRsp ranges
     constant A4L_rdata_range_l  : natural := A4L_data_width - 1 + 2;
     constant A4L_rdata_range_r  : natural := 2;
-    constant A4L_rdrsp_width    : natural := A4L_rdata_range_l;
+    constant A4L_rdrsp_width    : natural := A4L_rdata_range_l + 1;
     -- WrRsp ranges
     constant A4L_wrrsp_width    : natural := 2;
 
