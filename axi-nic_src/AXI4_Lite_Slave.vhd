@@ -23,6 +23,10 @@ use work.NIC_pkg.all;
 -------------------------------------------------------------------------------
 
 entity AXI4_Lite_Slave is
+  generic (
+    A4L_addr_width  : integer;
+    A4L_data_width  : integer
+  );
   port (
     ------------------------
     -- Incoming system clock
@@ -39,7 +43,7 @@ entity AXI4_Lite_Slave is
     ------------------------
     AXI_arready : out std_logic;
     AXI_arvalid : in  std_logic;
-    AXI_araddr  : in  std_logic_vector;
+    AXI_araddr  : in  std_logic_vector( A4L_addr_width - 1 + 3 downto 3 );
     AXI_arprot  : in  std_logic_vector( 2 downto 0 );
 
     ------------------------
@@ -47,7 +51,7 @@ entity AXI4_Lite_Slave is
     ------------------------
     AXI_awready : out std_logic;
     AXI_awvalid : in  std_logic;
-    AXI_awaddr  : in  std_logic_vector;
+    AXI_awaddr  : in  std_logic_vector( A4L_addr_width - 1 + 3 downto 3 );
     AXI_awprot  : in  std_logic_vector( 2 downto 0 );
 
     ------------------------
@@ -55,7 +59,7 @@ entity AXI4_Lite_Slave is
     ------------------------
     AXI_wready  : out std_logic;
     AXI_wvalid  : in  std_logic;
-    AXI_wdata   : in  std_logic_vector;
+    AXI_wdata   : in  std_logic_vector( A4L_data_width - 1 + 4 downto 4 );
     AXI_wstrb   : in  std_logic_vector( 3 downto 0 );
 
     ------------------------
@@ -63,7 +67,7 @@ entity AXI4_Lite_Slave is
     ------------------------
     AXI_rready  : in  std_logic;
     AXI_rvalid  : out std_logic;
-    AXI_rdata   : out std_logic_vector;
+    AXI_rdata   : out std_logic_vector( A4L_data_width - 1 + 2 downto 2 );
     AXI_rresp   : out std_logic_vector( 1 downto 0 );
 
     ------------------------
@@ -104,28 +108,11 @@ end AXI4_Lite_Slave;
 
 architecture Behavioral of AXI4_Lite_Slave is
     
-    constant A4L_addr_width     : natural := 8; --AXI_araddr'length;
-    constant A4L_data_width     : natural := 8; --AXI_wdata'length;
-
-    -- RdRqA ranges
-    constant A4L_araddr_range_l : natural := A4L_addr_width - 1 + 3;
-    constant A4L_araddr_range_r : natural := 3;
-    constant A4L_rdrqa_width    : natural := A4L_araddr_range_l + 1;
-    -- WrRqA ranges
-    constant A4L_awaddr_range_l : natural := A4L_addr_width - 1 + 3;
-    constant A4L_awaddr_range_r : natural := 3;
-    constant A4L_wrrqa_width    : natural := A4L_awaddr_range_l + 1;
-    -- WrRqD ranges
-    constant A4L_wdata_range_l  : natural := A4L_data_width - 1 + 4;
-    constant A4L_wdata_range_r  : natural := 4;
-    constant A4L_wrrqd_width    : natural := A4L_wdata_range_l + 1;
-    -- RdRsp ranges
-    constant A4L_rdata_range_l  : natural := A4L_data_width - 1 + 2;
-    constant A4L_rdata_range_r  : natural := 2;
-    constant A4L_rdrsp_width    : natural := A4L_rdata_range_l + 1;
-    -- WrRsp ranges
+    constant A4L_rdrqa_width    : natural := A4L_addr_width + 3;
+    constant A4L_wrrqa_width    : natural := A4L_addr_width + 3;
+    constant A4L_wrrqd_width    : natural := A4L_data_width + 4;
+    constant A4L_rdrsp_width    : natural := A4L_data_width + 2;
     constant A4L_wrrsp_width    : natural := 2;
-
 
     signal AXI_rdrqa_data   : std_logic_vector(A4L_rdrqa_width - 1 downto 0);
     signal AXI_wrrqa_data   : std_logic_vector(A4L_wrrqa_width - 1 downto 0);
@@ -138,7 +125,7 @@ begin
     AXI_wrrqa_data  <= AXI_awaddr & AXI_awprot;
     AXI_wrrqd_data  <= AXI_wdata & AXI_wstrb;
     
-    AXI_rdata       <= AXI_rdrsp_data(A4L_rdata_range_l downto A4L_rdata_range_r);
+    AXI_rdata       <= AXI_rdrsp_data(AXI_rdata'range);
     AXI_rresp       <= AXI_rdrsp_data(AXI_rresp'range);
     AXI_bresp       <= AXI_wrrsp_data(AXI_bresp'range);
 

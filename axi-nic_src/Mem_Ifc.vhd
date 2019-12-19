@@ -29,38 +29,70 @@ use work.Arke_pkg.all;
 
 entity Mem_Ifc is
     generic (
-        address: std_logic_vector;
-        address_map : std_logic_vector
+        A4F_addr_width  : integer;
+        A4F_data_width  : integer;
+        A4F_id_width    : integer;
+        NoC_address     : std_logic_vector;
+        NoC_address_map : std_logic_vector
     );
     port (
-        signal clk                  : in  std_logic := '1';
-        signal rst                  : in  std_logic := '1';
-        signal A4F_AXI_arvalid      : out std_logic;
-        signal A4F_AXI_arready      : in  std_logic;
-        signal A4F_AXI_rdrqA_data   : out AXI4_Full_Rd_RqA;
-        signal A4F_AXI_awvalid      : out std_logic;
-        signal A4F_AXI_awready      : in  std_logic;
-        signal A4F_AXI_wrrqA_data   : out AXI4_Full_Wr_RqA;
-        signal A4F_AXI_wvalid       : out std_logic;
-        signal A4F_AXI_wready       : in  std_logic;
-        signal A4F_AXI_wrrqD_data   : out AXI4_Full_Wr_RqD;
-        signal A4F_AXI_rready       : out std_logic;
-        signal A4F_AXI_rvalid       : in  std_logic;
-        signal A4F_AXI_rdrsp_data   : in  AXI4_Full_Rd_Rsp;
-        signal A4F_AXI_bready       : out std_logic;
-        signal A4F_AXI_bvalid       : in  std_logic;
-        signal A4F_AXI_wrrsp_data   : in  AXI4_Full_Wr_Rsp;
+        signal clk              : in  std_logic := '1';
+        signal rst              : in  std_logic := '1';
+        signal AXI_arvalid      : out std_logic;
+        signal AXI_arready      : in  std_logic;
+        signal AXI_araddr       : out std_logic_vector( A4F_addr_width - 1 + A4F_id_width + NoC_addr_width + 20 downto A4F_id_width + NoC_addr_width + 20 );
+        signal AXI_arid         : out std_logic_vector( A4F_id_width + NoC_addr_width - 1 + 20 downto 20 );
+        signal AXI_arlen        : out std_logic_vector( 19 downto 16 );
+        signal AXI_arsize       : out std_logic_vector( 15 downto 13 );
+        signal AXI_arburst      : out std_logic_vector( 12 downto 11 );
+        signal AXI_arlock       : out std_logic_vector( 10 downto 9 );
+        signal AXI_arcache      : out std_logic_vector(  8 downto 6 );
+        signal AXI_arprot       : out std_logic_vector(  5 downto 3 );
+        signal AXI_arqos        : out std_logic_vector(  2 downto 0 );
+        signal AXI_awvalid      : out std_logic;
+        signal AXI_awready      : in  std_logic;
+        signal AXI_awaddr       : out std_logic_vector( A4F_addr_width - 1 + A4F_id_width + NoC_addr_width + 20 downto A4F_id_width + NoC_addr_width + 20 );
+        signal AXI_awid         : out std_logic_vector( A4F_id_width + NoC_addr_width - 1 + 20 downto 20 );
+        signal AXI_awlen        : out std_logic_vector( 19 downto 16 );
+        signal AXI_awsize       : out std_logic_vector( 15 downto 13 );
+        signal AXI_awburst      : out std_logic_vector( 12 downto 11 );
+        signal AXI_awlock       : out std_logic_vector( 10 downto 9 );
+        signal AXI_awcache      : out std_logic_vector(  8 downto 6 );
+        signal AXI_awprot       : out std_logic_vector(  5 downto 3 );
+        signal AXI_awqos        : out std_logic_vector(  2 downto 0 );
+        signal AXI_wvalid       : out std_logic;
+        signal AXI_wready       : in  std_logic;
+        signal AXI_wdata        : out std_logic_vector( A4F_data_width - 1 + A4F_id_width + NoC_addr_width + 5 downto A4F_id_width + NoC_addr_width + 5 );
+        signal AXI_wid          : out std_logic_vector( A4F_id_width + NoC_addr_width - 1 + 5 downto 5 );
+        signal AXI_wstrb        : out std_logic_vector(  4 downto 1 );
+        signal AXI_wlast        : out std_logic_vector(  0 downto 0 );
+        signal AXI_rready       : out std_logic;
+        signal AXI_rvalid       : in  std_logic;
+        signal AXI_rdata        : in  std_logic_vector( A4F_data_width - 1 + A4F_id_width + NoC_addr_width + 3 downto A4F_id_width + NoC_addr_width + 3 );
+        signal AXI_rid          : in  std_logic_vector( A4F_id_width + NoC_addr_width - 1 + 3 downto 3 );
+        signal AXI_rresp        : in  std_logic_vector(  2 downto 1 );
+        signal AXI_rlast        : in  std_logic_vector(  0 downto 0 );
+        signal AXI_bready       : out std_logic;
+        signal AXI_bvalid       : in  std_logic;
+        signal AXI_bid          : in  std_logic_vector( A4F_id_width + NoC_addr_width - 1 + 2 downto 2 );
+        signal AXI_bresp        : in  std_logic_vector(  1 downto 0 );
 
-        signal dataOut          : out std_logic_vector(DATA_WIDTH - 1 downto 0);
-        signal controlOut       : out std_logic_vector(CONTROL_WIDTH - 1 downto 0);
-        signal dataIn           : in  std_logic_vector(DATA_WIDTH - 1 downto 0);
-        signal controlIn        : in  std_logic_vector(CONTROL_WIDTH - 1 downto 0)
+        signal dataOut          : out std_logic_vector(    DATA_WIDTH - 1 downto 0 );
+        signal controlOut       : out std_logic_vector( CONTROL_WIDTH - 1 downto 0 );
+        signal dataIn           : in  std_logic_vector(    DATA_WIDTH - 1 downto 0 );
+        signal controlIn        : in  std_logic_vector( CONTROL_WIDTH - 1 downto 0 )
     );
 end Mem_Ifc;
 
 -------------------------------------------------------------------------------
 
 architecture Behavioral of Mem_Ifc is
+
+    constant A4F_rdrqa_width    : natural := A4F_addr_width + A4F_id_width + NoC_addr_width + 20;
+    constant A4F_wrrqa_width    : natural := A4F_addr_width + A4F_id_width + NoC_addr_width + 20;
+    constant A4F_wrrqd_width    : natural := A4F_data_width + A4F_id_width + NoC_addr_width + 5;
+    constant A4F_rdrsp_width    : natural := A4F_data_width + A4F_id_width + NoC_addr_width + 3;
+    constant A4F_wrrsp_width    : natural := A4F_id_width + NoC_addr_width + 2;
 
     constant DIM_X_W    : integer := Log2(DIM_X);
     constant DIM_Y_W    : integer := Log2(DIM_Y);
@@ -69,27 +101,7 @@ architecture Behavioral of Mem_Ifc is
 
     type ADDR_MAP_TYPE is array (0 to DIM_X * DIM_Y * DIM_Z - 1) of std_logic_vector(ADDR_W - 1 downto 0);
     type State is (RdRsp, WrRsp, RdRqA, WrRqA, WrRqD);
-
-    signal A4F_rdrqA_put_ready : std_logic;
-    signal A4F_rdrqA_put_en    : std_logic;
-    signal A4F_rdrqA_put_data  : AXI4_Full_Rd_RqA;
-    signal A4F_wrrqA_put_ready : std_logic;
-    signal A4F_wrrqA_put_en    : std_logic;
-    signal A4F_wrrqA_put_data  : AXI4_Full_Wr_RqA;
-    signal A4F_wrrqD_put_ready : std_logic;
-    signal A4F_wrrqD_put_en    : std_logic;
-    signal A4F_wrrqD_put_data  : AXI4_Full_Wr_RqD;
-    signal A4F_rdrsp_get_valid : std_logic;
-    signal A4F_rdrsp_get_en    : std_logic;
-    signal A4F_rdrsp_get_data  : AXI4_Full_Rd_Rsp;
-    signal A4F_wrrsp_get_valid : std_logic;
-    signal A4F_wrrsp_get_en    : std_logic;
-    signal A4F_wrrsp_get_data  : AXI4_Full_Wr_Rsp;
-
-    signal req_put_stalled : std_logic;
-    signal state_send      : State;
-
-    --constant address_map_c : ADDR_MAP_TYPE := (others => (others => '0'));
+    type StallState is (None, RdRqA, WrRqA, WrRqD);
 
     function to_ADDR_MAP_TYPE (
         slv : std_logic_vector
@@ -97,64 +109,109 @@ architecture Behavioral of Mem_Ifc is
         variable result : ADDR_MAP_TYPE := (others => (others => '0'));
     begin
         for i in 0 to DIM_X * DIM_Y * DIM_Z - 1 loop
-            result(i) := slv(i * ADDR_W to (i+1) * ADDR_W - 1);
+            result(i) := slv(i * NoC_addr_width to (i+1) * NoC_addr_width - 1);
         end loop;
         return result;
     end function;
 
-    constant address_map_c : ADDR_MAP_TYPE := to_ADDR_MAP_TYPE(address_map);
+    constant address_map_c : ADDR_MAP_TYPE := to_ADDR_MAP_TYPE(NoC_address_map);
 
+    signal rdrqA_put_ready : std_logic;
+    signal rdrqA_put_en    : std_logic;
+    signal rdrqA_put_data  : std_logic_vector(A4F_rdrqa_width - 1 downto 0);
+    signal wrrqA_put_ready : std_logic;
+    signal wrrqA_put_en    : std_logic;
+    signal wrrqA_put_data  : std_logic_vector(A4F_wrrqa_width - 1 downto 0);
+    signal wrrqD_put_ready : std_logic;
+    signal wrrqD_put_en    : std_logic;
+    signal wrrqD_put_data  : std_logic_vector(A4F_wrrqd_width - 1 downto 0);
+    signal rdrsp_get_valid : std_logic;
+    signal rdrsp_get_en    : std_logic;
+    signal rdrsp_get_data  : std_logic_vector(A4F_rdrsp_width - 1 downto 0);
+    signal wrrsp_get_valid : std_logic;
+    signal wrrsp_get_en    : std_logic;
+    signal wrrsp_get_data  : std_logic_vector(A4F_wrrsp_width - 1 downto 0);
+
+    signal dataInStalled   : std_logic_vector(dataIn'range);
+    signal put_last_state  : StallState;
+    signal put_stalled     : std_logic;
+    signal state_send      : State;
 
     begin
 
         AXI_Master : AXI4_Full_Master
+        generic map (
+            A4F_addr_width  => A4F_addr_width,
+            A4F_data_width  => A4F_data_width,
+            A4F_id_width    => A4F_id_width + NoC_addr_width
+        )
         port map (
             clk             => clk,
             rst             => rst,
-            AXI_arvalid     => A4F_AXI_arvalid,
-            AXI_arready     => A4F_AXI_arready,
-            AXI_rdrqA_data  => A4F_AXI_rdrqA_data,
-            AXI_awvalid     => A4F_AXI_awvalid,
-            AXI_awready     => A4F_AXI_awready,
-            AXI_wrrqA_data  => A4F_AXI_wrrqA_data,
-            AXI_wvalid      => A4F_AXI_wvalid,
-            AXI_wready      => A4F_AXI_wready,
-            AXI_wrrqD_data  => A4F_AXI_wrrqD_data,
-            AXI_rready      => A4F_AXI_rready,
-            AXI_rvalid      => A4F_AXI_rvalid,
-            AXI_rdrsp_data  => A4F_AXI_rdrsp_data,
-            AXI_bready      => A4F_AXI_bready,
-            AXI_bvalid      => A4F_AXI_bvalid,
-            AXI_wrrsp_data  => A4F_AXI_wrrsp_data,
-            rdrqA_put_en    => A4F_rdrqA_put_en,
-            rdrqA_put_ready => A4F_rdrqA_put_ready,
-            rdrqA_put_data  => A4F_rdrqA_put_data,
-            wrrqA_put_en    => A4F_wrrqA_put_en,
-            wrrqA_put_ready => A4F_wrrqA_put_ready,
-            wrrqA_put_data  => A4F_wrrqA_put_data,
-            wrrqD_put_en    => A4F_wrrqD_put_en,
-            wrrqD_put_ready => A4F_wrrqD_put_ready,
-            wrrqD_put_data  => A4F_wrrqD_put_data,
-            rdrsp_get_valid => A4F_rdrsp_get_valid,
-            rdrsp_get_en    => A4F_rdrsp_get_en,
-            rdrsp_get_data  => A4F_rdrsp_get_data,
-            wrrsp_get_valid => A4F_wrrsp_get_valid,
-            wrrsp_get_en    => A4F_wrrsp_get_en,
-            wrrsp_get_data  => A4F_wrrsp_get_data
+            AXI_arvalid     => AXI_arvalid,
+            AXI_arready     => AXI_arready,
+            AXI_araddr      => AXI_araddr,
+            AXI_arid        => AXI_arid,
+            AXI_arlen       => AXI_arlen,
+            AXI_arsize      => AXI_arsize,
+            AXI_arburst     => AXI_arburst,
+            AXI_arlock      => AXI_arlock,
+            AXI_arcache     => AXI_arcache,
+            AXI_arprot      => AXI_arprot,
+            AXI_arqos       => AXI_arqos,
+            AXI_awvalid     => AXI_awvalid,
+            AXI_awready     => AXI_awready,
+            AXI_awaddr      => AXI_awaddr,
+            AXI_awid        => AXI_awid,
+            AXI_awlen       => AXI_awlen,
+            AXI_awsize      => AXI_awsize,
+            AXI_awburst     => AXI_awburst,
+            AXI_awlock      => AXI_awlock,
+            AXI_awcache     => AXI_awcache,
+            AXI_awprot      => AXI_awprot,
+            AXI_awqos       => AXI_awqos,
+            AXI_wvalid      => AXI_wvalid,
+            AXI_wready      => AXI_wready,
+            AXI_wdata       => AXI_wdata,
+            AXI_wid         => AXI_wid,
+            AXI_wstrb       => AXI_wstrb,
+            AXI_wlast       => AXI_wlast,
+            AXI_rready      => AXI_rready,
+            AXI_rvalid      => AXI_rvalid,
+            AXI_rdata       => AXI_rdata,
+            AXI_rid         => AXI_rid,
+            AXI_rresp       => AXI_rresp,
+            AXI_rlast       => AXI_rlast,
+            AXI_bready      => AXI_bready,
+            AXI_bvalid      => AXI_bvalid,
+            AXI_bid         => AXI_bid,
+            AXI_bresp       => AXI_bresp,
+            rdrqA_put_en    => rdrqA_put_en,
+            rdrqA_put_ready => rdrqA_put_ready,
+            rdrqA_put_data  => rdrqA_put_data,
+            wrrqA_put_en    => wrrqA_put_en,
+            wrrqA_put_ready => wrrqA_put_ready,
+            wrrqA_put_data  => wrrqA_put_data,
+            wrrqD_put_en    => wrrqD_put_en,
+            wrrqD_put_ready => wrrqD_put_ready,
+            wrrqD_put_data  => wrrqD_put_data,
+            rdrsp_get_valid => rdrsp_get_valid,
+            rdrsp_get_en    => rdrsp_get_en,
+            rdrsp_get_data  => rdrsp_get_data,
+            wrrsp_get_valid => wrrsp_get_valid,
+            wrrsp_get_en    => wrrsp_get_en,
+            wrrsp_get_data  => wrrsp_get_data
         );
 
         process(clk)
 
-            variable A4F_wrrqA_put_data_tmp : AXI4_Full_Wr_RqA;
-            variable A4F_wrrqD_put_data_tmp : AXI4_Full_Wr_RqD;
-            variable A4F_rdrqA_put_data_tmp : AXI4_Full_Rd_RqA;
-            variable A4F_wrrsp_get_data_tmp : AXI4_Full_Wr_Rsp;
-            variable A4F_rdrsp_get_data_tmp : AXI4_Full_Rd_Rsp;
+            variable rdrqA_put_data_tmp : std_logic_vector(A4F_rdrqa_width - 1 downto 0);
+            variable wrrqA_put_data_tmp : std_logic_vector(A4F_wrrqa_width - 1 downto 0);
+            variable wrrqD_put_data_tmp : std_logic_vector(A4F_wrrqd_width - 1 downto 0);
+            variable rdrsp_get_data_tmp : std_logic_vector(A4F_rdrsp_width - 1 downto 0);
+            variable wrrsp_get_data_tmp : std_logic_vector(A4F_wrrsp_width - 1 downto 0);
             
-            --TODO: check if needed, actual width
-            variable vec_A4F_wrrsp      : std_logic_vector(AXI4_Full_Wr_Rsp_WIDTH - 1 downto 0);
-            variable vec_A4F_rdrsp      : std_logic_vector(AXI4_Full_Rd_Rsp_WIDTH - 1 downto 0);
-            variable address        : std_logic_vector(ADDR_W - 1 downto 0);
+            variable dest_address       : std_logic_vector(NoC_addr_width - 1 downto 0);
             
         begin if rising_edge(clk) then
             -----------
@@ -164,7 +221,8 @@ architecture Behavioral of Mem_Ifc is
                 controlOut          <= "100";
                 dataOut             <= (others => '0');
                 state_send          <= RdRsp;
-                req_put_stalled     <= '0';
+                put_stalled         <= '0';
+                put_last_state      <= RdRqA;
             else
 
             --------------------------------------
@@ -178,21 +236,20 @@ architecture Behavioral of Mem_Ifc is
             
             -- STATE 1: RDRSP
             if (state_send = RdRsp) then
-                A4F_wrrsp_get_en        <= '0';
+                wrrsp_get_en        <= '0';
 
-                if (A4F_rdrsp_get_valid = '1') then
+                if (rdrsp_get_valid = '1') then
                     if (controlIn(STALL_GO) = '1') then
-                        A4F_rdrsp_get_data_tmp  := A4F_rdrsp_get_data;
-                        vec_A4F_rdrsp       := serialize_A4F_Rd_Rsp(A4F_rdrsp_get_data_tmp);
-                        address             := ZERO(ADDR_W - 1 downto 0);
-                        dataOut             <= '0' & "00" & ZERO(dataOut'left - 3 downto vec_A4F_rdrsp'length + ADDR_W) & vec_A4F_rdrsp & address;
+                        rdrsp_get_data_tmp  := rdrsp_get_data;
+                        dest_address        := rdrsp_get_data(AXI_rid'left downto AXI_rid'right + A4F_id_width);
+                        dataOut             <= '0' & "00" & ZERO(dataOut'left - 3 downto rdrsp_get_data_tmp'length + NoC_addr_width) & rdrsp_get_data_tmp & dest_address;
                         controlOut(TX)      <= '1';
                         controlOut(EOP)     <= '1';
 
-                        A4F_rdrsp_get_en    <= '1';
+                        rdrsp_get_en    <= '1';
                         state_send          <= WrRsp;
                     else
-                        A4F_rdrsp_get_en    <= '0';
+                        rdrsp_get_en    <= '0';
                     end if;
                 else
                     if (controlIn(STALL_GO) = '1') then
@@ -200,27 +257,26 @@ architecture Behavioral of Mem_Ifc is
                         controlOut(EOP)     <= '0';
                     end if;
 
-                    A4F_rdrsp_get_en        <= '0';
+                    rdrsp_get_en        <= '0';
                     state_send              <= WrRsp;
                 end if;
 
             -- STATE 2: WRRSP
             elsif (state_send = WrRsp) then
-                A4F_rdrsp_get_en        <= '0';
+                rdrsp_get_en        <= '0';
 
-                if (A4F_wrrsp_get_valid = '1') then
+                if (wrrsp_get_valid = '1') then
                     if (controlIn(STALL_GO) = '1') then
-                        A4F_wrrsp_get_data_tmp  := A4F_wrrsp_get_data;
-                        vec_A4F_wrrsp       := serialize_A4F_Wr_Rsp(A4F_wrrsp_get_data_tmp);
-                        address             := ZERO(ADDR_W - 1 downto 0);
-                        dataOut             <= '0' & "10" & ZERO(dataOut'left - 3 downto vec_A4F_wrrsp'length + ADDR_W) & vec_A4F_wrrsp & address;
+                        wrrsp_get_data_tmp  := wrrsp_get_data;
+                        dest_address        := rdrsp_get_data(AXI_bid'left downto AXI_bid'right + A4F_id_width);
+                        dataOut             <= '0' & "10" & ZERO(dataOut'left - 3 downto wrrsp_get_data_tmp'length + NoC_addr_width) & wrrsp_get_data_tmp & dest_address;
                         controlOut(TX)      <= '1';
                         controlOut(EOP)     <= '0';
 
-                        A4F_wrrsp_get_en    <= '1';
+                        wrrsp_get_en    <= '1';
                         state_send          <= RdRsp;
                     else
-                        A4F_wrrsp_get_en    <= '0';
+                        wrrsp_get_en    <= '0';
                     end if;
                 else
                     if (controlIn(STALL_GO) = '1') then
@@ -228,7 +284,7 @@ architecture Behavioral of Mem_Ifc is
                         controlOut(EOP)     <= '0';
                     end if;
 
-                    A4F_wrrsp_get_en        <= '0';
+                    wrrsp_get_en        <= '0';
                     state_send              <= RdRsp;
                 end if;
             end if;
@@ -241,48 +297,101 @@ architecture Behavioral of Mem_Ifc is
             -- attempts are made to hand the data to the receiver until it is ready
             -------------------------------------
 
-            if ((controlIn(RX) = '1') or (req_put_stalled = '1')) then
-                -- A4F WRRQA
-                if (dataIn(dataIn'left downto dataIn'left - 2) = "110") then
-                    if(A4F_wrrqA_put_ready = '1') then
-                        A4F_wrrqA_put_en        <= '1';
-                        A4F_wrrqA_put_data_tmp  := deserialize_A4F_Wr_RqA(dataIn(AXI4_Full_Wr_RqA_WIDTH + ADDR_W - 1 downto ADDR_W));
-                        A4F_wrrqA_put_data      <= A4F_wrrqA_put_data_tmp;
+            if (put_stalled = '1') then
+                if ((put_last_state = RdRqA and rdrqA_put_ready = '1') or
+                    (put_last_state = WrRqA and wrrqA_put_ready = '1') or
+                    (put_last_state = WrRqD and wrrqD_put_ready = '1')) then
+                    if (dataInStalled(dataIn'left - 1 downto dataIn'left - 2) = "10") then
+                        rdrqA_put_en            <= '0';
+                        wrrqD_put_en            <= '0';
+                        wrrqA_put_en            <= '1';
+                        wrrqA_put_data_tmp      := dataInStalled(A4F_wrrqA_width - 1 + NoC_addr_width downto NoC_addr_width);
+                        wrrqA_put_data          <= wrrqA_put_data_tmp;
                         controlOut(STALL_GO)    <= '1';
-                        req_put_stalled         <= '0';
-                    else
-                        controlOut(STALL_GO)    <= '0';
-                        req_put_stalled         <= '1';
-                    end if;
-                -- A4F WRRQD
-                elsif (dataIn(dataIn'left downto dataIn'left - 2) = "111") then
-                    if(A4F_wrrqD_put_ready = '1') then
-                        A4F_wrrqD_put_en        <= '1';
-                        A4F_wrrqD_put_data_tmp  := deserialize_A4F_Wr_RqD(dataIn(AXI4_Full_Wr_RqD_WIDTH + ADDR_W - 1 downto ADDR_W));
-                        A4F_wrrqD_put_data      <= A4F_wrrqD_put_data_tmp;
+                        put_last_state          <= WrRqA;
+                        put_stalled             <= '0';
+                    elsif (dataInStalled(dataIn'left - 1 downto dataIn'left - 2) = "11") then
+                        rdrqA_put_en            <= '0';
+                        wrrqA_put_en            <= '0';
+                        wrrqD_put_en            <= '1';
+                        wrrqD_put_data_tmp      := dataInStalled(A4F_wrrqD_width - 1 + NoC_addr_width downto NoC_addr_width);
+                        wrrqD_put_data          <= wrrqD_put_data_tmp;
                         controlOut(STALL_GO)    <= '1';
-                        req_put_stalled         <= '0';
-                    else
-                        controlOut(STALL_GO)    <= '0';
-                        req_put_stalled         <= '1';
-                    end if;
-                -- A4F RDRQA
-                elsif (dataIn(dataIn'left downto dataIn'left - 2) = "100") then
-                    if(A4F_rdrqA_put_ready = '1') then
-                        A4F_rdrqA_put_en        <= '1';
-                        A4F_rdrqA_put_data_tmp  := deserialize_A4F_Rd_RqA(dataIn(AXI4_Full_Rd_RqA_WIDTH + ADDR_W - 1 downto ADDR_W));
-                        A4F_rdrqA_put_data      <= A4F_rdrqA_put_data_tmp;
+                        put_last_state          <= WrRqD;
+                        put_stalled             <= '0';
+                    elsif (dataInStalled(dataIn'left - 1 downto dataIn'left - 2) = "00") then
+                        wrrqA_put_en            <= '0';
+                        wrrqD_put_en            <= '0';
+                        rdrqA_put_en            <= '1';
+                        rdrqA_put_data_tmp      := dataInStalled(A4F_rdrqA_width - 1 + NoC_addr_width downto NoC_addr_width);
+                        rdrqA_put_data          <= rdrqA_put_data_tmp;
                         controlOut(STALL_GO)    <= '1';
-                        req_put_stalled         <= '0';
-                    else
-                        controlOut(STALL_GO)    <= '0';
-                        req_put_stalled         <= '1';
+                        put_last_state          <= RdRqA;
+                        put_stalled             <= '0';
                     end if;
                 end if;
-            elsif (req_put_stalled = '0') then
-                controlOut(STALL_GO)    <= '1';
-                req_put_stalled         <= '0';
+            elsif (controlIn(RX) = '1') then
+                if (dataIn(dataIn'left - 1 downto dataIn'left - 2) = "10") then
+                    if ((put_last_state = WrRqA and wrrqA_put_ready = '1') or
+                        (put_last_state = WrRqD and wrrqD_put_ready = '1') or
+                        (put_last_state = RdRqA and rdrqA_put_ready = '1')) then
+                        rdrqA_put_en            <= '0';
+                        wrrqD_put_en            <= '0';
+                        wrrqA_put_en            <= '1';
+                        wrrqA_put_data_tmp      := dataIn(A4F_wrrqA_width - 1 + NoC_addr_width downto NoC_addr_width);
+                        wrrqA_put_data          <= wrrqA_put_data_tmp;
+                        controlOut(STALL_GO)    <= '1';
+                    else
+                        dataInStalled           <= dataIn;
+                        controlOut(STALL_GO)    <= '0';
+                        put_last_state          <= WrRqA;
+                        put_stalled             <= '1';
+                    end if;
+                elsif (dataIn(dataIn'left - 1 downto dataIn'left - 2) = "11") then
+                    if ((put_last_state = WrRqA and wrrqA_put_ready = '1') or
+                        (put_last_state = WrRqD and wrrqD_put_ready = '1') or
+                        (put_last_state = RdRqA and rdrqA_put_ready = '1')) then
+                        rdrqA_put_en            <= '0';
+                        wrrqA_put_en            <= '0';
+                        wrrqD_put_en            <= '1';
+                        wrrqD_put_data_tmp      := dataIn(A4F_wrrqD_width - 1 + NoC_addr_width downto NoC_addr_width);
+                        wrrqD_put_data          <= wrrqD_put_data_tmp;
+                        controlOut(STALL_GO)    <= '1';
+                    else
+                        dataInStalled           <= dataIn;
+                        controlOut(STALL_GO)    <= '0';
+                        put_last_state          <= WrRqD;
+                        put_stalled             <= '1';
+                    end if;
+                elsif (dataIn(dataIn'left - 1 downto dataIn'left - 2) = "00") then
+                    if ((put_last_state = WrRqA and wrrqA_put_ready = '1') or
+                        (put_last_state = WrRqD and wrrqD_put_ready = '1') or
+                        (put_last_state = RdRqA and rdrqA_put_ready = '1')) then
+                        wrrqA_put_en            <= '0';
+                        wrrqD_put_en            <= '0';
+                        rdrqA_put_en            <= '1';
+                        rdrqA_put_data_tmp      := dataIn(A4F_rdrqA_width - 1 + NoC_addr_width downto NoC_addr_width);
+                        rdrqA_put_data          <= rdrqA_put_data_tmp;
+                        controlOut(STALL_GO)    <= '1';
+                    else
+                        dataInStalled           <= dataIn;
+                        controlOut(STALL_GO)    <= '0';
+                        put_last_state          <= RdRqA;
+                        put_stalled             <= '1';
+                    end if;
+                end if;
+            elsif (controlIn(RX) = '0') then
+                if(wrrqA_put_ready = '1') then
+                    wrrqA_put_en    <= '0';
+                end if;
+                if(wrrqD_put_ready = '1') then
+                    wrrqA_put_en    <= '0';
+                end if;
+                if(rdrqA_put_ready = '1') then
+                    rdrqA_put_en    <= '0';
+                end if;
             end if;
+
             end if;
         end if;
     end process;

@@ -44,42 +44,47 @@ architecture tb1 of Arch_Ifc_tb is
 
   -- component ports
   signal clk              : std_logic := '1';
-    signal rst            : std_logic := '1';
-    signal AXI_arvalid    : std_logic;
-    signal AXI_arready    : std_logic;
-    signal AXI_rdrqA_data : AXI4_Lite_Rd_RqA;
-    signal AXI_awvalid    : std_logic;
-    signal AXI_awready    : std_logic;
-    signal AXI_wrrqA_data : AXI4_Lite_Wr_RqA;
-    signal AXI_wvalid     : std_logic;
-    signal AXI_wready     : std_logic;
-    signal AXI_wrrqD_data : AXI4_Lite_Wr_RqD;
-    signal AXI_rready     : std_logic;
-    signal AXI_rvalid     : std_logic;
-    signal AXI_rdrsp_data : AXI4_Lite_Rd_Rsp;
-    signal AXI_bready     : std_logic;
-    signal AXI_bvalid     : std_logic;
-    signal AXI_wrrsp_data : AXI4_Lite_Wr_Rsp;
-    signal dataOut        : std_logic_vector(DATA_WIDTH - 1 downto 0);
-    signal controlOut     : std_logic_vector(CONTROL_WIDTH - 1 downto 0);
-    signal dataIn         : std_logic_vector(DATA_WIDTH - 1 downto 0);
-    signal controlIn      : std_logic_vector(CONTROL_WIDTH - 1 downto 0);
+  signal rst              : std_logic := '1';
+  signal AXI_arvalid      : std_logic;
+  signal AXI_arready      : std_logic;
+  signal AXI_araddr       : std_logic_vector( 7 downto 0 );
+  signal AXI_arprot       : std_logic_vector( 2 downto 0 );
+  signal AXI_awvalid      : std_logic;
+  signal AXI_awready      : std_logic;
+  signal AXI_awaddr       : std_logic_vector( 7 downto 0 );
+  signal AXI_awprot       : std_logic_vector( 2 downto 0 );
+  signal AXI_wvalid       : std_logic;
+  signal AXI_wready       : std_logic;
+  signal AXI_wdata        : std_logic_vector( 7 downto 0 );
+  signal AXI_wstrb        : std_logic_vector( 3 downto 0 );
+  signal AXI_rready       : std_logic;
+  signal AXI_rvalid       : std_logic;
+  signal AXI_rdata        : std_logic_vector( 7 downto 0 );
+  signal AXI_rresp        : std_logic_vector( 1 downto 0 );
+  signal AXI_bready       : std_logic;
+  signal AXI_bvalid       : std_logic;
+  signal AXI_bresp        : std_logic_vector( 1 downto 0 );
 
-    signal Cycle       : natural := 1;
+  signal dataOut          : std_logic_vector(    DATA_WIDTH - 1 downto 0 );
+  signal controlOut       : std_logic_vector( CONTROL_WIDTH - 1 downto 0 );
+  signal dataIn           : std_logic_vector(    DATA_WIDTH - 1 downto 0 );
+  signal controlIn        : std_logic_vector( CONTROL_WIDTH - 1 downto 0 );
+
+  signal Cycle       : natural := 1;
 
 
-    function to_ADDR_MAP_TYPE (
-        slv : std_logic_vector
-        ) return ADDR_MAP_TYPE is
-        variable result : ADDR_MAP_TYPE := (others => (others => '0'));
-    begin
-        for i in 0 to DIM_X * DIM_Y * DIM_Z - 1 loop
-            result(i) := slv(i * ADDR_W to (i+1) * ADDR_W - 1);
-        end loop;
-        return result;
-    end function;
+  function to_ADDR_MAP_TYPE (
+      slv : std_logic_vector
+      ) return ADDR_MAP_TYPE is
+      variable result : ADDR_MAP_TYPE := (others => (others => '0'));
+  begin
+      for i in 0 to DIM_X * DIM_Y * DIM_Z - 1 loop
+          result(i) := slv(i * ADDR_W to (i+1) * ADDR_W - 1);
+      end loop;
+      return result;
+  end function;
 
-    constant address_map_c : ADDR_MAP_TYPE := to_ADDR_MAP_TYPE(address_map);
+  constant address_map_c : ADDR_MAP_TYPE := to_ADDR_MAP_TYPE(address_map);
 
 begin  -- architecture tb1
 
@@ -93,19 +98,23 @@ begin  -- architecture tb1
       rst            => rst,
       AXI_arvalid    => AXI_arvalid,
       AXI_arready    => AXI_arready,
-      AXI_rdrqA_data => AXI_rdrqA_data,
+      AXI_araddr     => AXI_araddr,
+      AXI_arprot     => AXI_arprot,
       AXI_awvalid    => AXI_awvalid,
       AXI_awready    => AXI_awready,
-      AXI_wrrqA_data => AXI_wrrqA_data,
+      AXI_awaddr     => AXI_awaddr,
+      AXI_awprot     => AXI_awprot,
       AXI_wvalid     => AXI_wvalid,
       AXI_wready     => AXI_wready,
-      AXI_wrrqD_data => AXI_wrrqD_data,
+      AXI_wdata      => AXI_wdata,
+      AXI_wstrb      => AXI_wstrb,
       AXI_rready     => AXI_rready,
       AXI_rvalid     => AXI_rvalid,
-      AXI_rdrsp_data => AXI_rdrsp_data,
+      AXI_rdata      => AXI_rdata,
+      AXI_rresp      => AXI_rresp,
       AXI_bready     => AXI_bready,
       AXI_bvalid     => AXI_bvalid,
-      AXI_wrrsp_data => AXI_wrrsp_data,
+      AXI_bresp      => AXI_bresp,
       dataOut        => dataOut,
       controlOut     => controlOut,
       dataIn         => dataIn,
@@ -124,11 +133,14 @@ begin  -- architecture tb1
 
   --req in
   variable AXI_arvalid_value    : std_logic;
-  variable AXI_rdrqA_data_value : AXI4_Lite_Rd_RqA;
+  variable AXI_araddr_value     : std_logic_vector( 7 downto 0 );
+  variable AXI_arprot_value     : std_logic_vector( 2 downto 0 );
   variable AXI_awvalid_value    : std_logic;
-  variable AXI_wrrqA_data_value : AXI4_Lite_Wr_RqA;
+  variable AXI_awaddr_value     : std_logic_vector( 7 downto 0 );
+  variable AXI_awprot_value     : std_logic_vector( 2 downto 0 );
   variable AXI_wvalid_value     : std_logic;
-  variable AXI_wrrqD_data_value : AXI4_Lite_Wr_RqD;
+  variable AXI_wdata_value      : std_logic_vector( 7 downto 0 );
+  variable AXI_wstrb_value      : std_logic_vector( 3 downto 0 );
 
   --req out
   variable AXI_arready_value    : std_logic;
@@ -149,9 +161,10 @@ begin  -- architecture tb1
 
   --rsp out
   variable AXI_rvalid_value     : std_logic;
-  variable AXI_rdrsp_data_value : AXI4_Lite_Rd_Rsp;
+  variable AXI_rdata_value      : std_logic_vector( 7 downto 0 );
+  variable AXI_rresp_value      : std_logic_vector( 1 downto 0 );
   variable AXI_bvalid_value     : std_logic;
-  variable AXI_wrrsp_data_value : AXI4_Lite_Wr_Rsp;
+  variable AXI_bresp_value      : std_logic_vector( 1 downto 0 );
   
   procedure check_cycle is
   begin
@@ -160,11 +173,14 @@ begin  -- architecture tb1
 
     --req in
     AXI_arvalid     <= AXI_arvalid_value;
-    AXI_rdrqA_data  <= AXI_rdrqA_data_value;
+    AXI_araddr      <= AXI_araddr_value;
+    AXI_arprot      <= AXI_arprot_value;
     AXI_awvalid     <= AXI_awvalid_value;
-    AXI_wrrqA_data  <= AXI_wrrqA_data_value;
+    AXI_awaddr      <= AXI_awaddr_value;
+    AXI_awprot      <= AXI_awprot_value;
     AXI_wvalid      <= AXI_wvalid_value;
-    AXI_wrrqD_data  <= AXI_wrrqD_data_value;
+    AXI_wdata       <= AXI_wdata_value;
+    AXI_wstrb       <= AXI_wstrb_value;
     
     --data in
     dataIn          <= dataIn_value;
@@ -210,20 +226,20 @@ begin  -- architecture tb1
       report "AXI_rvalid - expected '" & to_string(AXI_rvalid_value) &
           "' got '" & to_string(AXI_rvalid) & "'";
     end if;
-    if (AXI_rdrsp_data_value.data /= "XXXXXXXX") then
-      assert AXI_rdrsp_data.data = AXI_rdrsp_data_value.data
-      report "AXI_rdrsp_data - expected '" & to_string(AXI_rdrsp_data_value.data) &
-          "' got '" & to_string(AXI_rdrsp_data.data) & "'";
+    if (AXI_rdata_value /= "XXXXXXXX") then
+      assert AXI_rdata = AXI_rdata_value
+      report "AXI_rdata - expected '" & to_string(AXI_rdata_value) &
+          "' got '" & to_string(AXI_rdata) & "'";
     end if;
     if (AXI_bvalid_value /= 'X') then
       assert AXI_bvalid = AXI_bvalid_value
       report "AXI_bvalid - expected '" & to_string(AXI_bvalid_value) &
           "' got '" & to_string(AXI_bvalid) & "'";
     end if;
-    if (AXI_wrrsp_data_value.resp /= "XX") then
-      assert AXI_wrrsp_data.resp = AXI_wrrsp_data_value.resp
-      report "AXI_wrrsp_data - expected '" & to_string(AXI_wrrsp_data_value.resp) &
-          "' got '" & to_string(AXI_wrrsp_data.resp) & "'";
+    if (AXI_bresp_value /= "XX") then
+      assert AXI_bresp = AXI_bresp_value
+      report "AXI_bresp - expected '" & to_string(AXI_bresp_value) &
+          "' got '" & to_string(AXI_bresp) & "'";
     end if;
   end procedure check_cycle;
 
@@ -237,11 +253,14 @@ begin  -- architecture tb1
     -------------------------------------------------------------- 001
     -- in
     AXI_arvalid_value     := '1';
-    AXI_rdrqA_data_value  := deserialize_A4L_Rd_RqA("00000001111"); --max 2047
+    AXI_araddr_value      := "00000001";
+    AXI_arprot_value      := "111";
     AXI_awvalid_value     := '0';
-    AXI_wrrqA_data_value  := deserialize_A4L_Wr_RqA("00000000000"); --max 2047
+    AXI_awaddr_value      := "00000000";
+    AXI_awprot_value      := "000";
     AXI_wvalid_value      := '0';
-    AXI_wrrqD_data_value  := deserialize_A4L_Wr_RqD("000000000000"); --max 4095
+    AXI_wdata_value       := "00000000";
+    AXI_wstrb_value       := "0000";
 
     dataIn_value          := (others => '1');
     controlIn_value       := "111";
@@ -258,31 +277,101 @@ begin  -- architecture tb1
     controlOut_value      := "100";
 
     AXI_rvalid_value      := '0';
-    AXI_rdrsp_data_value  := deserialize_A4L_Rd_Rsp("XXXXXXXXXX");
+    AXI_rdata_value       := "XXXXXXXX";
+    AXI_rresp_value       := "XX";
     AXI_bvalid_value      := '0';
-    AXI_wrrsp_data_value  := deserialize_A4L_Wr_Rsp("XX");
+    AXI_bresp_value       := "XX";
 
     check_cycle;
     -------------------------------------------------------------- 002
     -- in
-    AXI_rdrqA_data_value  := deserialize_A4L_Rd_RqA("00010001111");
+    AXI_araddr_value      := "00010001";
+    AXI_arprot_value      := "111";
+
+    dataIn_value          := (others => '0');
+    controlIn_value       := "101";
     -- out
 
     check_cycle;
     -------------------------------------------------------------- 003
-    -- in
-    AXI_rdrqA_data_value  := deserialize_A4L_Rd_RqA("00001100000");
-    -- out
-    AXI_arready_value     := '0';
     vec_rdrqa             := "00000001111";
     address               := address_map_c(to_Integer(unsigned(vec_rdrqa(10 downto 3))) + 1);
+    -- in
+    AXI_araddr_value      := "00001100";
+    AXI_arprot_value      := "000";
+
+    dataIn_value          := '0' & "00" & ZERO(dataOut'left - 3 downto vec_rdrqa'length + ADDR_W) & vec_rdrqa & address;
+
+    AXI_rready_value      := '0';
+    AXI_bready_value      := '0';
+    -- out
+    AXI_arready_value     := '0';
     dataOut_value         := '0' & "00" & ZERO(dataOut'left - 3 downto vec_rdrqa'length + ADDR_W) & vec_rdrqa & address;
     controlOut_value      := "111";
 
+    AXI_bvalid_value      := '1';
+    AXI_bresp_value       := "11";
+
+    check_cycle;
     -------------------------------------------------------------- 004
+    vec_rdrqa             := "00010001111";
+    address               := address_map_c(to_Integer(unsigned(vec_rdrqa(10 downto 3))) + 1);
     -- in
-    AXI_arvalid_value     := '1';
+    AXI_awvalid_value     := '1';
+    AXI_awaddr_value      := "00000010";
+    AXI_awprot_value      := "010";
+    AXI_wvalid_value      := '1';
+    AXI_wdata_value       := "00100000";
+    AXI_wstrb_value       := "0011";
+
+    dataIn_value          := '0' & "00" & ZERO(dataOut'left - 3 downto vec_rdrqa'length + ADDR_W) & vec_rdrqa & address;
     -- out
+
+    AXI_rvalid_value      := '1';
+    AXI_rdata_value       := "00000000";
+    AXI_rresp_value       := "00";
+
+    check_cycle;
+    -------------------------------------------------------------- 005
+    vec_rdrqa             := "00000010010";
+    address               := address_map_c(to_Integer(unsigned(vec_rdrqa(10 downto 3))) + 1);
+    -- in
+    AXI_awvalid_value     := '0';
+    AXI_wvalid_value      := '0';
+
+    dataIn_value          := '0' & "10" & ZERO(dataOut'left - 3 downto vec_rdrqa'length + ADDR_W) & vec_rdrqa & address;
+    controlIn_value       := "111";
+
+    AXI_rready_value      := '1';
+    AXI_bready_value      := '1';
+    -- out
+
+    AXI_rdata_value       := "00000011";
+    AXI_rresp_value       := "11";
+
+    check_cycle;
+    -------------------------------------------------------------- 006
+    vec_rdrqa             := "00000111011";
+    address               := address_map_c(to_Integer(unsigned(vec_rdrqa(10 downto 3))) + 1);
+    -- in
+    AXI_rready_value      := '1';
+    AXI_bready_value      := '1';
+
+    dataIn_value          := '0' & "10" & ZERO(dataOut'left - 3 downto vec_rdrqa'length + ADDR_W) & vec_rdrqa & address;
+    controlIn_value       := "111";
+    -- out
+
+    check_cycle;
+    -------------------------------------------------------------- 007
+    vec_rdrqa             := "00000010010";
+    address               := address_map_c(to_Integer(unsigned(vec_rdrqa(10 downto 3))) + 1);
+    -- in
+    dataIn_value          := '0' & "00" & ZERO(dataOut'left - 3 downto vec_rdrqa'length + ADDR_W) & vec_rdrqa & address;
+    controlIn_value       := "111";
+    -- out
+
+    AXI_rdata_value       := "00000011";
+    AXI_rresp_value       := "11";
 
     check_cycle;
     

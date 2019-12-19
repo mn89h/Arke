@@ -23,6 +23,10 @@ use work.NIC_pkg.all;
 -------------------------------------------------------------------------------
 
 entity AXI4_Lite_Master is
+  generic (
+    A4L_addr_width  : integer;
+    A4L_data_width  : integer
+  );
   port (
     ------------------------
     -- Incoming system clock
@@ -39,7 +43,7 @@ entity AXI4_Lite_Master is
     ------------------------
     AXI_arready : in  std_logic;
     AXI_arvalid : out std_logic;
-    AXI_araddr  : out std_logic_vector;
+    AXI_araddr  : out std_logic_vector( A4L_addr_width - 1 + 3 downto 3 );
     AXI_arprot  : out std_logic_vector(  2 downto 0 );
 
     ------------------------
@@ -47,7 +51,7 @@ entity AXI4_Lite_Master is
     ------------------------
     AXI_awready : in  std_logic;
     AXI_awvalid : out std_logic;
-    AXI_awaddr  : out std_logic_vector;
+    AXI_awaddr  : out std_logic_vector( A4L_addr_width - 1 + 3 downto 3 );
     AXI_awprot  : out std_logic_vector(  2 downto 0 );
 
     ------------------------
@@ -55,7 +59,7 @@ entity AXI4_Lite_Master is
     ------------------------
     AXI_wready  : in  std_logic;
     AXI_wvalid  : out std_logic;
-    AXI_wdata   : out std_logic_vector;
+    AXI_wdata   : out std_logic_vector( A4L_data_width - 1 + 4 downto 4 );
     AXI_wstrb   : out std_logic_vector(  3 downto 0 );
 
     ------------------------
@@ -63,7 +67,7 @@ entity AXI4_Lite_Master is
     ------------------------
     AXI_rready  : out std_logic;
     AXI_rvalid  : in  std_logic;
-    AXI_rdata   : in  std_logic_vector;
+    AXI_rdata   : in  std_logic_vector( A4L_data_width - 1 + 2 downto 2 );
     AXI_rresp   : in  std_logic_vector(  1 downto 0 );
 
     ------------------------
@@ -104,28 +108,11 @@ end AXI4_Lite_Master;
 
 architecture Behavioral of AXI4_Lite_Master is
 
-    constant A4L_addr_width     : natural := AXI_araddr'length;
-    constant A4L_data_width     : natural := AXI_wdata'length;
-
-    -- RdRqA ranges
-    constant A4L_araddr_range_l : natural := A4L_addr_width - 1 + 3;
-    constant A4L_araddr_range_r : natural := 3;
-    constant A4L_rdrqa_width    : natural := A4L_araddr_range_l + 1;
-    -- WrRqA ranges
-    constant A4L_awaddr_range_l : natural := A4L_addr_width - 1 + 3;
-    constant A4L_awaddr_range_r : natural := 3;
-    constant A4L_wrrqa_width    : natural := A4L_awaddr_range_l + 1;
-    -- WrRqD ranges
-    constant A4L_wdata_range_l  : natural := A4L_data_width - 1 + 4;
-    constant A4L_wdata_range_r  : natural := 4;
-    constant A4L_wrrqd_width    : natural := A4L_wdata_range_l + 1;
-    -- RdRsp ranges
-    constant A4L_rdata_range_l  : natural := A4L_data_width - 1 + 2;
-    constant A4L_rdata_range_r  : natural := 2;
-    constant A4L_rdrsp_width    : natural := A4L_rdata_range_l + 1;
-    -- WrRsp ranges
+    constant A4L_rdrqa_width    : natural := A4L_addr_width + 3;
+    constant A4L_wrrqa_width    : natural := A4L_addr_width + 3;
+    constant A4L_wrrqd_width    : natural := A4L_data_width + 4;
+    constant A4L_rdrsp_width    : natural := A4L_data_width + 2;
     constant A4L_wrrsp_width    : natural := 2;
-
 
     signal AXI_rdrqA_data   : std_logic_vector(AXI4_Lite_Rd_RqA_WIDTH - 1 downto 0);
     signal AXI_wrrqA_data   : std_logic_vector(AXI4_Lite_Wr_RqA_WIDTH - 1 downto 0);
@@ -134,11 +121,11 @@ architecture Behavioral of AXI4_Lite_Master is
     signal AXI_wrrsp_data   : std_logic_vector(AXI4_Lite_Wr_Rsp_WIDTH - 1 downto 0);
 begin
 
-    AXI_araddr      <= AXI_rdrqA_data(A4L_araddr_range_l downto A4L_araddr_range_r);
+    AXI_araddr      <= AXI_rdrqA_data(AXI_araddr'range);
     AXI_arprot      <= AXI_rdrqA_data(AXI_arprot'range);
-    AXI_awaddr      <= AXI_wrrqA_data(A4L_awaddr_range_l downto A4L_awaddr_range_r);
+    AXI_awaddr      <= AXI_wrrqA_data(AXI_awaddr'range);
     AXI_awprot      <= AXI_wrrqA_data(AXI_awprot'range);
-    AXI_wdata       <= AXI_wrrqD_data(A4L_wdata_range_l downto A4L_wdata_range_r);
+    AXI_wdata       <= AXI_wrrqD_data(AXI_wdata'range);
     AXI_wstrb       <= AXI_wrrqD_data(AXI_wstrb'range);
 
     AXI_rdrsp_data  <= AXI_rdata & AXI_rresp;

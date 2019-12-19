@@ -23,6 +23,11 @@ use work.NIC_pkg.all;
 -------------------------------------------------------------------------------
 
 entity AXI4_Full_Master is
+  generic (
+    A4F_addr_width  : integer;
+    A4F_data_width  : integer;
+    A4F_id_width    : integer
+  );
   port (
     ------------------------
     -- Incoming system clock
@@ -39,8 +44,8 @@ entity AXI4_Full_Master is
     ------------------------
     AXI_arready : in  std_logic;
     AXI_arvalid : out std_logic;
-    AXI_araddr  : out std_logic_vector;
-    AXI_arid    : out std_logic_vector( 31 downto 20 );
+    AXI_araddr  : out std_logic_vector( A4F_addr_width - 1 + A4F_id_width + 20 downto A4F_id_width + 20 );
+    AXI_arid    : out std_logic_vector( A4F_id_width - 1 + 20 downto 20 );
     AXI_arlen   : out std_logic_vector( 19 downto 16 );
     AXI_arsize  : out std_logic_vector( 15 downto 13 );
     AXI_arburst : out std_logic_vector( 12 downto 11 );
@@ -54,8 +59,8 @@ entity AXI4_Full_Master is
     ------------------------
     AXI_awready : in  std_logic;
     AXI_awvalid : out std_logic;    
-    AXI_awaddr  : out std_logic_vector;
-    AXI_awid    : out std_logic_vector( 31 downto 20 );
+    AXI_awaddr  : out std_logic_vector( A4F_addr_width - 1 + A4F_id_width + 20 downto A4F_id_width + 20 );
+    AXI_awid    : out std_logic_vector( A4F_id_width - 1 + 20 downto 20 );
     AXI_awlen   : out std_logic_vector( 19 downto 16 );
     AXI_awsize  : out std_logic_vector( 15 downto 13 );
     AXI_awburst : out std_logic_vector( 12 downto 11 );
@@ -69,8 +74,8 @@ entity AXI4_Full_Master is
     ------------------------
     AXI_wready  : in  std_logic;
     AXI_wvalid  : out std_logic;
-    AXI_wdata   : out std_logic_vector;
-    AXI_wid     : out std_logic_vector( 16 downto 5 );
+    AXI_wdata   : out std_logic_vector( A4F_addr_width - 1 + A4F_id_width + 5 downto A4F_id_width + 5 );
+    AXI_wid     : out std_logic_vector( A4F_id_width - 1 + 5 downto 5 );
     AXI_wstrb   : out std_logic_vector(  4 downto 1 );
     AXI_wlast   : out std_logic_vector(  0 downto 0 );
 
@@ -79,8 +84,8 @@ entity AXI4_Full_Master is
     ------------------------
     AXI_rready  : out std_logic;
     AXI_rvalid  : in  std_logic;
-    AXI_rdata   : in  std_logic_vector;
-    AXI_rid     : in  std_logic_vector( 14 downto 3 );
+    AXI_rdata   : in  std_logic_vector( A4F_addr_width - 1 + A4F_id_width + 3 downto A4F_id_width + 3 );
+    AXI_rid     : in  std_logic_vector( A4F_id_width - 1 + 3 downto 3 );
     AXI_rresp   : in  std_logic_vector(  2 downto 1 );
     AXI_rlast   : in  std_logic_vector(  0 downto 0 );
 
@@ -89,7 +94,7 @@ entity AXI4_Full_Master is
     ------------------------
     AXI_bready  : out std_logic;
     AXI_bvalid  : in  std_logic;
-    AXI_bid     : in  std_logic_vector( 13 downto 2 );
+    AXI_bid     : in  std_logic_vector( A4F_id_width - 1 + 2 downto 2 );
     AXI_bresp   : in  std_logic_vector(  1 downto 0 );
 
     ---------------------------------
@@ -123,28 +128,11 @@ end AXI4_Full_Master;
 
 architecture Behavioral of AXI4_Full_Master is
 
-    constant A4F_addr_width     : natural := AXI_araddr'length;
-    constant A4F_data_width     : natural := AXI_wdata'length;
-
-    -- RdRqA ranges
-    constant A4F_araddr_range_l : natural := A4F_addr_width - 1 + 32;
-    constant A4F_araddr_range_r : natural := 32;
-    constant A4F_rdrqa_width    : natural := A4F_araddr_range_l + 1;
-    -- WrRqA ranges
-    constant A4F_awaddr_range_l : natural := A4F_addr_width - 1 + 32;
-    constant A4F_awaddr_range_r : natural := 32;
-    constant A4F_wrrqa_width    : natural := A4F_awaddr_range_l + 1;
-    -- WrRqD ranges
-    constant A4F_wdata_range_l  : natural := A4F_data_width - 1 + 17;
-    constant A4F_wdata_range_r  : natural := 17;
-    constant A4F_wrrqd_width    : natural := A4F_wdata_range_l + 1;
-    -- RdRsp ranges
-    constant A4F_rdata_range_l  : natural := A4F_data_width - 1 + 15;
-    constant A4F_rdata_range_r  : natural := 15;
-    constant A4F_rdrsp_width    : natural := A4F_rdata_range_l + 1;
-    -- WrRsp ranges
-    constant A4F_wrrsp_width    : natural := 14;
-
+    constant A4F_rdrqa_width    : natural := A4F_addr_width + A4F_id_width + 20;
+    constant A4F_wrrqa_width    : natural := A4F_addr_width + A4F_id_width + 20;
+    constant A4F_wrrqd_width    : natural := A4F_data_width + A4F_id_width + 5;
+    constant A4F_rdrsp_width    : natural := A4F_data_width + A4F_id_width + 3;
+    constant A4F_wrrsp_width    : natural := A4F_id_width + 2;
 
     signal AXI_rdrqA_data   : std_logic_vector(A4F_rdrqa_width - 1 downto 0);
     signal AXI_wrrqA_data   : std_logic_vector(A4F_wrrqa_width - 1 downto 0);
@@ -153,7 +141,7 @@ architecture Behavioral of AXI4_Full_Master is
     signal AXI_wrrsp_data   : std_logic_vector(A4F_wrrsp_width - 1 downto 0);
 begin
 
-    AXI_araddr      <= AXI_rdrqA_data(A4F_araddr_range_l downto A4F_araddr_range_r);
+    AXI_araddr      <= AXI_rdrqA_data(AXI_araddr'range);
     AXI_arid        <= AXI_rdrqA_data(AXI_arid'range);
     AXI_arlen       <= AXI_rdrqA_data(AXI_arlen'range);
     AXI_arsize      <= AXI_rdrqA_data(AXI_arsize'range);
@@ -162,7 +150,7 @@ begin
     AXI_arcache     <= AXI_rdrqA_data(AXI_arcache'range);
     AXI_arprot      <= AXI_rdrqA_data(AXI_arprot'range);
     AXI_arqos       <= AXI_rdrqA_data(AXI_arqos'range);
-    AXI_awaddr      <= AXI_wrrqA_data(A4F_awaddr_range_l downto A4F_awaddr_range_r);
+    AXI_awaddr      <= AXI_wrrqA_data(AXI_awaddr'range);
     AXI_awid        <= AXI_wrrqA_data(AXI_awid'range);
     AXI_awlen       <= AXI_wrrqA_data(AXI_awlen'range);
     AXI_awsize      <= AXI_wrrqA_data(AXI_awsize'range);
@@ -171,7 +159,7 @@ begin
     AXI_awcache     <= AXI_wrrqA_data(AXI_awcache'range);
     AXI_awprot      <= AXI_wrrqA_data(AXI_awprot'range);
     AXI_awqos       <= AXI_wrrqA_data(AXI_awqos'range);
-    AXI_wdata       <= AXI_wrrqD_data(A4F_wdata_range_l downto A4F_wdata_range_r);
+    AXI_wdata       <= AXI_wrrqD_data(AXI_wdata'range);
     AXI_wid         <= AXI_wrrqD_data(AXI_wid'range);
     AXI_wstrb       <= AXI_wrrqD_data(AXI_wstrb'range);
     AXI_wlast       <= AXI_wrrqD_data(AXI_wlast'range);

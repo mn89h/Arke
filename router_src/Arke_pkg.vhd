@@ -26,6 +26,7 @@ package Arke_pkg is
     constant DIM_X    : integer := 3;
     constant DIM_Y    : integer := 3;
     constant DIM_Z    : integer := 3;
+    constant NoC_addr_width : natural := 6; --Log2(DIM_X) + Log2(DIM_Y) + Log2(DIM_Z);
     
     -- Input buffers depth 
     constant BUFFER_DEPTH : integer := 8; -- Buffer depth must be greater than 1 and a power of 2
